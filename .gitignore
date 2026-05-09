@@ -1,0 +1,17 @@
+.env
+.env.*
+.DS_Store
+Thumbs.db
+*.swp
+[._]*.s[a-v][a-z]
+
+backend/target/
+backend/**/*.rs.bk
+
+frontend/node_modules/
+frontend/dist/
+frontend/.next/
+frontend/.eslintcache
+
+.vscode/
+.idea/
