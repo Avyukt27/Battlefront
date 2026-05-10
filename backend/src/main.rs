@@ -2,6 +2,8 @@ use axum::{Json, Router, routing::get};
 use serde::Serialize;
 use std::net::SocketAddr;
 
+mod game;
+
 #[derive(Serialize)]
 struct Status {
     message: String,
