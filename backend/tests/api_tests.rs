@@ -42,3 +42,30 @@ async fn test_join() {
     assert_eq!(body["players"].as_array().unwrap().len(), 1);
     assert_eq!(body["players"][0]["colour"], "Red");
 }
+
+#[tokio::test]
+async fn test_roll() {
+    let state = Arc::new(AppState {
+        game: Mutex::new(GameState::new(8, 8)),
+    });
+    let app = create_routes(state);
+
+    let request = Request::builder()
+        .method(http::Method::POST)
+        .uri("/api/roll")
+        .header(http::header::CONTENT_TYPE, "application/json")
+        .body(Body::empty())
+        .unwrap();
+
+    let response = app.oneshot(request).await.unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let body: Value = serde_json::from_slice(&body).unwrap();
+
+    let roll = body["last_roll"]
+        .as_u64()
+        .expect("last_roll should be a number");
+    assert!(roll >= 1 && roll <= 6, "Roll was {}, expected 1-6", roll);
+}
