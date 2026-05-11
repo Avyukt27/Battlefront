@@ -6,6 +6,7 @@ use std::{
 use crate::{game::GameState, routes::create_routes};
 
 mod game;
+mod requests;
 mod routes;
 
 pub struct AppState {

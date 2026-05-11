@@ -88,4 +88,20 @@ impl GameState {
 
         Ok(())
     }
+
+    pub fn add_player(&mut self, id: u32, colour: PlayerColour, class: String) {
+        let (start_x, start_y) = match colour {
+            PlayerColour::Red => (0, 0),
+            PlayerColour::Blue => (self.width - 1, self.height - 1),
+            PlayerColour::Green => (0, self.height - 1),
+        };
+
+        self.players.push(Player {
+            id,
+            colour,
+            x: start_x,
+            y: start_y,
+            class,
+        });
+    }
 }

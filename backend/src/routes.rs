@@ -7,25 +7,21 @@ use axum::{
     response::{IntoResponse, Response},
     routing::{get, post},
 };
-use serde::Deserialize;
 use tower_http::cors::CorsLayer;
 
-use crate::AppState;
+use crate::{
+    AppState,
+    requests::{JoinRequest, MoveRequest},
+};
 
 pub fn create_routes(state: Arc<AppState>) -> Router {
     Router::new()
         .route("/api/state", get(get_state_handler))
         .route("/api/roll", post(roll_dice_handler))
         .route("/api/move", post(move_player_handler))
+        .route("/api/join", post(add_player_handler))
         .layer(CorsLayer::permissive())
         .with_state(state)
-}
-
-#[derive(Deserialize)]
-pub struct MoveRequest {
-    player_id: u32,
-    target_x: u8,
-    target_y: u8,
 }
 
 pub async fn roll_dice_handler(State(state): State<Arc<AppState>>) -> impl IntoResponse {
@@ -54,4 +50,17 @@ pub async fn move_player_handler(
 pub async fn get_state_handler(State(state): State<Arc<AppState>>) -> impl IntoResponse {
     let game = state.game.lock().unwrap();
     Json(game.clone())
+}
+
+pub async fn add_player_handler(
+    State(state): State<Arc<AppState>>,
+    Json(payload): Json<JoinRequest>,
+) -> impl IntoResponse {
+    let mut game = state.game.lock().unwrap();
+
+    let new_id = (game.players.len() as u32) + 1;
+
+    game.add_player(new_id, payload.colour, payload.class);
+
+    (StatusCode::CREATED, Json(game.clone()))
 }
