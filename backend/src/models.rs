@@ -17,6 +17,7 @@ pub enum CardEffect {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Card {
+    pub id: String,
     pub name: String,
     pub effects: Vec<CardEffect>,
 }
@@ -24,6 +25,7 @@ pub struct Card {
 impl Card {
     pub fn create_rock() -> Self {
         Self {
+            id: "".to_string(),
             name: "Rock".to_string(),
             effects: vec![
                 CardEffect::SkillCheck {
@@ -37,13 +39,15 @@ impl Card {
 
     pub fn create_stick() -> Self {
         Self {
-            name: "Sword".to_string(),
-            effects: vec![CardEffect::Damage { power: 2 }],
+            id: "".to_string(),
+            name: "Stick".to_string(),
+            effects: vec![CardEffect::Damage { power: 1 }],
         }
     }
 
     pub fn create_bandage() -> Self {
         Self {
+            id: "".to_string(),
             name: "Bandage".to_string(),
             effects: vec![
                 CardEffect::Heal { amount: 2 },

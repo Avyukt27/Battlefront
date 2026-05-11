@@ -1,3 +1,4 @@
+use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 
 use crate::models::{ActiveEffect, Card, CardEffect};
@@ -163,8 +164,29 @@ impl GameState {
     }
 
     pub fn initialise_deck(&mut self) {
-        let mut new_deck = Vec::new();
+        let mut new_deck: Vec<Card> = Vec::new();
 
-        for _ in 0..4 {}
+        for _ in 0..4 {
+            new_deck.push(Card::create_rock());
+        }
+        for _ in 0..3 {
+            new_deck.push(Card::create_stick());
+        }
+        for _ in 0..3 {
+            new_deck.push(Card::create_bandage());
+        }
+
+        let mut rng = rand::rng();
+        new_deck.shuffle(&mut rng);
+    }
+
+    pub fn draw_card(&mut self, player_id: u32) {
+        if let Some(player) = self.players.iter_mut().find(|p| p.id == player_id) {
+            if player.cards.len() < 3 && !self.deck.is_empty() {
+                let mut card = self.deck.remove(0);
+                card.id = uuid::Uuid::new_v4().to_string();
+                player.cards.push(card);
+            }
+        }
     }
 }
