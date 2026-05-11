@@ -1,6 +1,8 @@
 use rand::RngExt;
 use serde::{Deserialize, Serialize};
 
+use crate::models::{ActiveEffect, Card, CardEffect};
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum PlayerColour {
     Red,
@@ -14,7 +16,11 @@ pub struct Player {
     pub colour: PlayerColour,
     pub x: u8,
     pub y: u8,
+    pub health: i32,
+    pub max_health: i32,
+    pub status_effects: Vec<ActiveEffect>,
     pub class: String,
+    pub cards: Vec<Card>,
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -42,8 +48,7 @@ impl GameState {
     }
 
     pub fn roll_dice(&mut self) -> u8 {
-        let mut rng = rand::rng();
-        self.last_roll = rng.random_range(1..=6);
+        self.last_roll = rand::random_range(1..=6);
         self.last_roll
     }
 
@@ -107,7 +112,52 @@ impl GameState {
             colour,
             x: start_x,
             y: start_y,
+            health: 20,
+            max_health: 20,
+            status_effects: Vec::new(),
             class,
+            cards: Vec::new(),
         });
+    }
+
+    pub fn use_card(card: &Card, attacker: &mut Player, target: &mut Player) {
+        let mut hit_confirmed = true;
+        let distance = (attacker.x as i16 - target.x as i16).abs()
+            + (attacker.y as i16 - target.y as i16).abs();
+
+        for effect in &card.effects {
+            if !hit_confirmed {
+                break;
+            }
+
+            match effect {
+                CardEffect::SkillCheck {
+                    threshold,
+                    max_range,
+                } => {
+                    if distance > *max_range as i16 {
+                        hit_confirmed = false;
+                    } else if distance > 1 {
+                        let roll = rand::random_range(1..=6) as u8;
+                        if roll < *threshold {
+                            hit_confirmed = false;
+                        }
+                    }
+                }
+                CardEffect::Damage { power } => target.health -= power,
+                CardEffect::Heal { amount } => {
+                    attacker.health = (attacker.health + amount).min(attacker.max_health)
+                }
+                CardEffect::ApplyStatus { status, duration } => {
+                    target.status_effects.push(ActiveEffect {
+                        status: status.clone(),
+                        duration: *duration,
+                    })
+                }
+                CardEffect::CureStatus { status } => {
+                    attacker.status_effects.retain(|e| e.status != *status);
+                }
+            }
+        }
     }
 }
