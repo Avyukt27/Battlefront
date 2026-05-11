@@ -17,10 +17,11 @@ use crate::{
 
 pub fn create_routes(state: Arc<ServerState>) -> Router {
     Router::new()
-        .route("/api/state", get(get_state_handler))
-        .route("/api/roll", post(roll_dice_handler))
-        .route("/api/move", post(move_player_handler))
-        .route("/api/join", post(add_player_handler))
+        .route("/api/state/:game_id", get(get_state_handler))
+        .route("/api/roll/:game_id", post(roll_dice_handler))
+        .route("/api/move/:game_id", post(move_player_handler))
+        .route("/api/join/:game_id", post(join_game_handler))
+        .route("/api/create", post(create_game_handler))
         .layer(CorsLayer::permissive())
         .with_state(state)
 }
@@ -73,24 +74,24 @@ pub async fn get_state_handler(
     }
 }
 
-pub async fn add_player_handler(
+pub async fn join_game_handler(
     Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
     Json(payload): Json<JoinRequest>,
-) -> Result<Json<GameState>, StatusCode> {
+) -> Result<Json<Value>, StatusCode> {
     let games = state.games.lock().unwrap();
 
     if let Some(game_mutex) = games.get(&game_id) {
         let mut game = game_mutex.lock().unwrap();
         let new_id = (game.players.len() as u32) + 1;
         game.add_player(new_id, payload.colour, payload.class);
-        Ok(Json(game.clone()))
+        Ok(Json(json!({"player_id": new_id, "state": *game})))
     } else {
         Err(StatusCode::NOT_FOUND)
     }
 }
 
-pub async fn create_game(State(state): State<Arc<ServerState>>) -> Json<Value> {
+pub async fn create_game_handler(State(state): State<Arc<ServerState>>) -> Json<Value> {
     let mut games = state.games.lock().unwrap();
     let game_id = format!("{:x}", rand::random::<u16>());
     let new_game = Arc::new(Mutex::new(GameState::new(8, 8)));
