@@ -1,4 +1,3 @@
-use rand::RngExt;
 use serde::{Deserialize, Serialize};
 
 use crate::models::{ActiveEffect, Card, CardEffect};
@@ -30,6 +29,7 @@ pub struct GameState {
     pub last_roll: u8,
     pub width: u8,
     pub height: u8,
+    pub deck: Vec<Card>,
 }
 
 impl GameState {
@@ -40,6 +40,7 @@ impl GameState {
             last_roll: 0,
             width,
             height,
+            deck: Vec::new(),
         }
     }
 
@@ -159,5 +160,11 @@ impl GameState {
                 }
             }
         }
+    }
+
+    pub fn initialise_deck(&mut self) {
+        let mut new_deck = Vec::new();
+
+        for _ in 0..4 {}
     }
 }

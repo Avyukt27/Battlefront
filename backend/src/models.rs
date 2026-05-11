@@ -21,6 +21,40 @@ pub struct Card {
     pub effects: Vec<CardEffect>,
 }
 
+impl Card {
+    pub fn create_rock() -> Self {
+        Self {
+            name: "Rock".to_string(),
+            effects: vec![
+                CardEffect::SkillCheck {
+                    threshold: 5,
+                    max_range: 4,
+                },
+                CardEffect::Damage { power: 1 },
+            ],
+        }
+    }
+
+    pub fn create_stick() -> Self {
+        Self {
+            name: "Sword".to_string(),
+            effects: vec![CardEffect::Damage { power: 2 }],
+        }
+    }
+
+    pub fn create_bandage() -> Self {
+        Self {
+            name: "Bandage".to_string(),
+            effects: vec![
+                CardEffect::Heal { amount: 2 },
+                CardEffect::CureStatus {
+                    status: Status::Bleed,
+                },
+            ],
+        }
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ActiveEffect {
     pub status: Status,
