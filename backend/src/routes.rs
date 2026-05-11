@@ -12,6 +12,7 @@ use tower_http::cors::CorsLayer;
 use crate::{
     ServerState,
     game::{GameState, PlayerColour},
+    models::Card,
     requests::{JoinRequest, MoveRequest},
 };
 
@@ -22,6 +23,7 @@ pub fn create_routes(state: Arc<ServerState>) -> Router {
         .route("/api/move/{game_id}", post(move_player_handler))
         .route("/api/join/{game_id}", post(join_game_handler))
         .route("/api/create", post(create_game_handler))
+        .route("/api/cards/{game_id}/{player_id}", get(get_cards_handler))
         .layer(CorsLayer::permissive())
         .with_state(state)
 }
@@ -109,4 +111,24 @@ pub async fn create_game_handler(State(state): State<Arc<ServerState>>) -> Json<
     let new_game = Arc::new(Mutex::new(GameState::new(8, 8)));
     games.insert(game_id.clone(), new_game);
     Json(json!({ "game_id": game_id }))
+}
+
+pub async fn get_cards_handler(
+    Path((game_id, player_id)): Path<(String, u32)>,
+    State(state): State<Arc<ServerState>>,
+) -> Result<Json<Vec<Card>>, StatusCode> {
+    let games = state.games.lock().unwrap();
+    let game = games
+        .get(&game_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .lock()
+        .unwrap();
+
+    let player = game
+        .players
+        .iter()
+        .find(|p| p.id == player_id)
+        .ok_or(StatusCode::NOT_FOUND)?;
+
+    Ok(Json(player.cards.clone()))
 }
