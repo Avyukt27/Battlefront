@@ -89,3 +89,28 @@ async fn test_cannot_move_before_rolling() {
     let response = app.oneshot(request).await.unwrap();
     assert_eq!(response.status(), StatusCode::BAD_REQUEST);
 }
+
+#[tokio::test]
+async fn test_cannot_move_occupied() {
+    let mut game = GameState::new(8, 8);
+    game.add_player(1, backend::game::PlayerColour::Red, "Artificer".to_string());
+    game.add_player(2, backend::game::PlayerColour::Blue, "Knight".to_string());
+    game.last_roll = 14;
+
+    let state = Arc::new(AppState {
+        game: Mutex::new(game),
+    });
+    let app = create_routes(state);
+
+    let request = Request::builder()
+        .method(http::Method::POST)
+        .uri("/api/move")
+        .header(http::header::CONTENT_TYPE, "application/json")
+        .body(Body::from(
+            json!({"player_id": 1, "target_x": 7, "target_y": 7}).to_string(),
+        ))
+        .unwrap();
+
+    let response = app.oneshot(request).await.unwrap();
+    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+}
