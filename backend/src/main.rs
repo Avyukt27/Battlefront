@@ -1,25 +1,19 @@
-use axum::{Json, Router, routing::get};
-use serde::Serialize;
-use std::net::SocketAddr;
+use std::{
+    net::SocketAddr,
+    sync::{Arc, Mutex},
+};
 
-#[derive(Serialize)]
-struct Status {
-    message: String,
-    status: String,
-}
+use backend::{AppState, game::GameState, routes::create_routes};
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/api/health", get(health_check));
+    let state = Arc::new(AppState {
+        game: Mutex::new(GameState::new(8, 8)),
+    });
+
+    let app = create_routes(state);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
-}
-
-async fn health_check() -> Json<Status> {
-    Json(Status {
-        message: "Battlefront Game Online".to_string(),
-        status: "OK".to_string(),
-    })
 }
