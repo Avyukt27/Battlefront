@@ -69,3 +69,23 @@ async fn test_roll() {
         .expect("last_roll should be a number");
     assert!(roll >= 1 && roll <= 6, "Roll was {}, expected 1-6", roll);
 }
+
+#[tokio::test]
+async fn test_cannot_move_before_rolling() {
+    let state = Arc::new(AppState {
+        game: Mutex::new(GameState::new(8, 8)),
+    });
+    let app = create_routes(state);
+
+    let request = Request::builder()
+        .method(http::Method::POST)
+        .uri("/api/move")
+        .header(http::header::CONTENT_TYPE, "application/json")
+        .body(Body::from(
+            json!({"player_id": 1, "target_x": 1, "target_y": 1}).to_string(),
+        ))
+        .unwrap();
+
+    let response = app.oneshot(request).await.unwrap();
+    assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+}
