@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useGameStore } from '@/stores/game';
+import { computed } from 'vue';
 
 const store = useGameStore();
+const roll = computed(() => store.gameState?.last_roll);
 </script>
 
 <template>
@@ -21,5 +23,5 @@ const store = useGameStore();
       Leave Game
     </button>
   </div>
-  <div class="text-xl text-indigo-400">Current Roll: {{ store.gameState?.last_roll }}</div>
+  <div v-if="roll != 0" class="text-xl text-indigo-400">Roll: {{ roll }}</div>
 </template>

@@ -25,14 +25,14 @@ const handleJoin = async () => {
   <div class="flex items-center justify-center p-6">
     <div class="w-full max-w-md p-8 bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl">
       <h2 class="text-2xl font-bold text-center mb-8 text-white uppercase tracking-widest">
-        Command Center
+        Lobby
       </h2>
 
       <div class="space-y-6">
         <div class="pt-4 space-y-4">
           <button @click="handleCreate"
             class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98]">
-            Establish New Theatre
+            Create new game
           </button>
 
           <div class="flex items-center gap-4">
