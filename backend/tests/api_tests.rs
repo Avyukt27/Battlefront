@@ -4,18 +4,24 @@ use axum::{
 };
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
-use std::sync::{Arc, Mutex};
+use std::{collections::HashMap, sync::{Arc, Mutex}};
 use tower::ServiceExt;
 
-use backend::AppState;
+use backend::ServerState;
 use backend::game::GameState;
 use backend::routes::create_routes;
 
+fn setup_test_state(game: GameState) -> Arc<ServerState> {
+    let mut games = HashMap::new();
+    games.insert("test-game".to_string(), Arc::new(Mutex::new(game)));
+    Arc::new(ServerState {
+        games: Mutex::new(games),
+    })
+}
+
 #[tokio::test]
 async fn test_join() {
-    let state = Arc::new(AppState {
-        game: Mutex::new(GameState::new(8, 8)),
-    });
+let state = setup_test_state(GameState::new(8, 8));
     let app = create_routes(state);
 
     let request = Request::builder()
@@ -45,9 +51,7 @@ async fn test_join() {
 
 #[tokio::test]
 async fn test_roll() {
-    let state = Arc::new(AppState {
-        game: Mutex::new(GameState::new(8, 8)),
-    });
+let state = setup_test_state(GameState::new(8, 8));
     let app = create_routes(state);
 
     let request = Request::builder()
@@ -72,9 +76,7 @@ async fn test_roll() {
 
 #[tokio::test]
 async fn test_cannot_move_before_rolling() {
-    let state = Arc::new(AppState {
-        game: Mutex::new(GameState::new(8, 8)),
-    });
+let state = setup_test_state(GameState::new(8, 8));
     let app = create_routes(state);
 
     let request = Request::builder()
@@ -98,9 +100,7 @@ async fn test_cannot_move_occupied() {
     game.last_roll = 14;
     game.current_turn = backend::game::PlayerColour::Red;
 
-    let state = Arc::new(AppState {
-        game: Mutex::new(game),
-    });
+let state = setup_test_state(game);
     let app = create_routes(state);
 
     let request = Request::builder()
@@ -124,9 +124,7 @@ async fn test_cannot_move_out_of_turn() {
     game.last_roll = 14;
     game.current_turn = backend::game::PlayerColour::Blue;
 
-    let state = Arc::new(AppState {
-        game: Mutex::new(game),
-    });
+let state = setup_test_state(game);
     let app = create_routes(state);
 
     let request = Request::builder()
@@ -150,9 +148,7 @@ async fn test_automatic_turn_change() {
     game.last_roll = 2;
     game.current_turn = backend::game::PlayerColour::Red;
 
-    let state = Arc::new(AppState {
-        game: Mutex::new(game),
-    });
+let state = setup_test_state(game);
     let app = create_routes(state);
 
     let request = Request::builder()
