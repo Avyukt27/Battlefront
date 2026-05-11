@@ -11,16 +11,16 @@ use tower_http::cors::CorsLayer;
 
 use crate::{
     ServerState,
-    game::GameState,
+    game::{GameState, PlayerColour},
     requests::{JoinRequest, MoveRequest},
 };
 
 pub fn create_routes(state: Arc<ServerState>) -> Router {
     Router::new()
-        .route("/api/state/:game_id", get(get_state_handler))
-        .route("/api/roll/:game_id", post(roll_dice_handler))
-        .route("/api/move/:game_id", post(move_player_handler))
-        .route("/api/join/:game_id", post(join_game_handler))
+        .route("/api/state/{game_id}", get(get_state_handler))
+        .route("/api/roll/{game_id}", post(roll_dice_handler))
+        .route("/api/move/{game_id}", post(move_player_handler))
+        .route("/api/join/{game_id}", post(join_game_handler))
         .route("/api/create", post(create_game_handler))
         .layer(CorsLayer::permissive())
         .with_state(state)
@@ -84,8 +84,20 @@ pub async fn join_game_handler(
     if let Some(game_mutex) = games.get(&game_id) {
         let mut game = game_mutex.lock().unwrap();
         let new_id = (game.players.len() as u32) + 1;
-        game.add_player(new_id, payload.colour, payload.class);
-        Ok(Json(json!({"player_id": new_id, "state": *game})))
+
+        let player_count = game.players.len();
+        let player_colour = match player_count {
+            0 => Some(PlayerColour::Red),
+            1 => Some(PlayerColour::Blue),
+            2 => Some(PlayerColour::Green),
+            _ => None,
+        };
+        if let Some(colour) = player_colour {
+            game.add_player(new_id, colour, payload.class);
+            Ok(Json(json!({"player_id": new_id, "state": *game})))
+        } else {
+            Err(StatusCode::TOO_MANY_REQUESTS)
+        }
     } else {
         Err(StatusCode::NOT_FOUND)
     }

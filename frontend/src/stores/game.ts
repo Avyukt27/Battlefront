@@ -32,16 +32,16 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  async function joinGame(id: string, colour: string, className: string) {
+  async function joinGame(id: string, className: string) {
     const response = await fetch(`http://localhost:3000/api/join/${id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ colour, class: className }),
+      body: JSON.stringify({ name: 'Test', class: className }),
     });
 
     if (response.ok) {
       const data = await response.json();
-      myPlayerId.value = data.your_id;
+      myPlayerId.value = data.player_id;
       gameId.value = id;
       gameState.value = data.state;
     } else {
@@ -91,6 +91,14 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
+  function leaveGame() {
+    gameId.value = null;
+    myPlayerId.value = null;
+    gameState.value = null;
+    localStorage.removeItem('saved_game_id');
+    localStorage.removeItem('saved_player_id');
+  }
+
   return {
     gameState,
     gameId,
@@ -101,5 +109,6 @@ export const useGameStore = defineStore('game', () => {
     fetchState,
     makeMove,
     rollDice,
+    leaveGame,
   };
 });

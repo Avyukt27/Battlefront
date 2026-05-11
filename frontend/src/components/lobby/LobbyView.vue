@@ -5,20 +5,19 @@ import { useGameStore } from '@/stores/game';
 const store = useGameStore();
 const joinId = ref('');
 const selectedClass = ref('Knight');
-const selectedColour = ref<'Red' | 'Blue'>('Red');
 
 const handleCreate = async () => {
   await store.createGame();
 
   if (store.gameId) {
-    await store.joinGame(store.gameId, selectedColour.value, selectedClass.value);
+    console.log(store.gameId);
+    await store.joinGame(store.gameId, selectedClass.value);
   }
 };
 
 const handleJoin = async () => {
   if (!joinId.value) return;
-  const autoColour = selectedColour.value === 'Red' ? 'Blue' : 'Red';
-  await store.joinGame(joinId.value.toLowerCase(), autoColour, selectedClass.value);
+  await store.joinGame(joinId.value.toLowerCase(), selectedClass.value);
 };
 </script>
 
@@ -30,22 +29,6 @@ const handleJoin = async () => {
       </h2>
 
       <div class="space-y-6">
-        <div class="space-y-3">
-          <label class="text-xs font-bold text-slate-500 uppercase">Select Division</label>
-          <div class="grid grid-cols-2 gap-2">
-            <button v-for="color in ['Red', 'Blue']" :key="color" @click="selectedColour = color as any" :class="[
-              'py-2 rounded-lg border-2 transition-all font-bold',
-              selectedColour === color
-                ? color === 'Red'
-                  ? 'border-red-500 bg-red-500/20 text-red-500'
-                  : 'border-blue-500 bg-blue-500/20 text-blue-500'
-                : 'border-slate-800 bg-slate-950 text-slate-600',
-            ]">
-              {{ color }} Team
-            </button>
-          </div>
-        </div>
-
         <div class="pt-4 space-y-4">
           <button @click="handleCreate"
             class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-600/20 active:scale-[0.98]">
