@@ -40,7 +40,7 @@ export const useGameStore = defineStore('game', () => {
     const response = await fetch(`http://localhost:3000/api/join/${id}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: 'Test', class: className }),
+      body: JSON.stringify({ class: className }),
     });
 
     if (response.ok) {

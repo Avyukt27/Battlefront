@@ -9,6 +9,5 @@ pub struct MoveRequest {
 
 #[derive(Deserialize)]
 pub struct JoinRequest {
-    pub name: String,
     pub class: String,
 }
