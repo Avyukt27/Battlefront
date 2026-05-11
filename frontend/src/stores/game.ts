@@ -18,8 +18,12 @@ interface GameState {
 
 export const useGameStore = defineStore('game', () => {
   const gameState = ref<GameState | null>(null);
-  const gameId = ref<string | null>(null);
-  const myPlayerId = ref<number | null>(null);
+  const gameId = ref<string | null>(localStorage.getItem('saved_game_id'));
+  const myPlayerId = ref<number | null>(
+    localStorage.getItem('saved_player_id')
+      ? Number(localStorage.getItem('saved_player_id'))
+      : null,
+  );
   const isRolling = ref(false);
 
   async function createGame() {
@@ -43,6 +47,8 @@ export const useGameStore = defineStore('game', () => {
       const data = await response.json();
       myPlayerId.value = data.player_id;
       gameId.value = id;
+      localStorage.setItem('saved_game_id', id);
+      localStorage.setItem('saved_player_id', data.player_id);
       gameState.value = data.state;
     } else {
       alert('Could not join game. Check the ID.');
@@ -51,9 +57,16 @@ export const useGameStore = defineStore('game', () => {
 
   async function fetchState() {
     if (!gameId.value) return;
-    const response = await fetch(`http://localhost:3000/api/state/${gameId.value}`);
-    if (response.ok) {
-      gameState.value = await response.json();
+    try {
+      const response = await fetch(`http://localhost:3000/api/state/${gameId.value}`);
+      if (response.ok) {
+        gameState.value = await response.json();
+      } else if (response.status === 404) {
+        console.warn('Room not found, clearing session...');
+        leaveGame();
+      }
+    } catch (err) {
+      console.error('Network error during sync:', err);
     }
   }
 
@@ -97,6 +110,7 @@ export const useGameStore = defineStore('game', () => {
     gameState.value = null;
     localStorage.removeItem('saved_game_id');
     localStorage.removeItem('saved_player_id');
+    window.location.reload();
   }
 
   return {

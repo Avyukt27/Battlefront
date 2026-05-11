@@ -8,8 +8,11 @@ import LobbyView from './components/lobby/LobbyView.vue';
 const store = useGameStore();
 let pollInterval: number;
 
-onMounted(() => {
-  store.fetchState();
+onMounted(async () => {
+  if (store.gameId) {
+    console.log('Reconnecting to game: ', store.gameId);
+    await store.fetchState();
+  }
 
   pollInterval = setInterval(() => {
     store.fetchState();
@@ -44,11 +47,6 @@ onUnmounted(() => {
 
       <GameBoard />
       <GameControls />
-    </section>
-
-    <section v-else class="flex flex-col items-center justify-center py-20">
-      <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-      <p class="mt-4 text-slate-500 italic">Waiting for server...</p>
     </section>
   </div>
 </template>

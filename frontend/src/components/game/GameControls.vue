@@ -16,6 +16,10 @@ const store = useGameStore();
       <span v-if="store.isRolling">Rolling...</span>
       <span v-else>Roll Dice</span>
     </button>
+    <button @click="store.leaveGame"
+      class="px-6 py-2 bg-red-500 hover:bg-red-400 rounded-md border border-red-400 transition-colors">
+      Leave Game
+    </button>
   </div>
   <div class="text-xl text-indigo-400">Current Roll: {{ store.gameState?.last_roll }}</div>
 </template>
