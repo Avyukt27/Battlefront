@@ -3,15 +3,7 @@ use std::{
     sync::{Arc, Mutex},
 };
 
-use crate::{game::GameState, routes::create_routes};
-
-mod game;
-mod requests;
-mod routes;
-
-pub struct AppState {
-    game: Mutex<GameState>,
-}
+use backend::{AppState, game::GameState, routes::create_routes};
 
 #[tokio::main]
 async fn main() {
