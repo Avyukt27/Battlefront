@@ -48,10 +48,6 @@ impl GameState {
     }
 
     pub fn try_move(&mut self, player_id: u32, target_x: u8, target_y: u8) -> Result<(), String> {
-        if self.last_roll == 0 {
-            return Err("You must roll the dice first!".to_string());
-        }
-
         let (current_x, current_y, player_colour) = {
             let p = self
                 .players
@@ -64,6 +60,9 @@ impl GameState {
         if player_colour != self.current_turn {
             return Err("It is not your turn!".to_string());
         }
+        if self.last_roll == 0 {
+            return Err("You must roll the dice first!".to_string());
+        }
 
         let dist =
             (current_x as i16 - target_x as i16).abs() + (current_y as i16 - target_y as i16).abs();
@@ -71,7 +70,6 @@ impl GameState {
         if dist > self.last_roll as i16 {
             return Err("Destination is too far away!".to_string());
         }
-
         if self
             .players
             .iter()
@@ -84,6 +82,7 @@ impl GameState {
         player.x = target_x;
         player.y = target_y;
 
+        self.last_roll = 0;
         if let Some(index) = self
             .players
             .iter()
@@ -92,7 +91,6 @@ impl GameState {
             let next_index = (index + 1) % self.players.len();
             self.current_turn = self.players[next_index].colour.clone();
         }
-        self.last_roll = 0;
 
         Ok(())
     }
