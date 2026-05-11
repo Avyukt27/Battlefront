@@ -4,7 +4,10 @@ use axum::{
 };
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
-use std::{collections::HashMap, sync::{Arc, Mutex}};
+use std::{
+    collections::HashMap,
+    sync::{Arc, Mutex},
+};
 use tower::ServiceExt;
 
 use backend::ServerState;
@@ -21,7 +24,7 @@ fn setup_test_state(game: GameState) -> Arc<ServerState> {
 
 #[tokio::test]
 async fn test_join() {
-let state = setup_test_state(GameState::new(8, 8));
+    let state = setup_test_state(GameState::new(8, 8));
     let app = create_routes(state);
 
     let request = Request::builder()
@@ -51,7 +54,7 @@ let state = setup_test_state(GameState::new(8, 8));
 
 #[tokio::test]
 async fn test_roll() {
-let state = setup_test_state(GameState::new(8, 8));
+    let state = setup_test_state(GameState::new(8, 8));
     let app = create_routes(state);
 
     let request = Request::builder()
@@ -76,7 +79,7 @@ let state = setup_test_state(GameState::new(8, 8));
 
 #[tokio::test]
 async fn test_cannot_move_before_rolling() {
-let state = setup_test_state(GameState::new(8, 8));
+    let state = setup_test_state(GameState::new(8, 8));
     let app = create_routes(state);
 
     let request = Request::builder()
@@ -100,7 +103,7 @@ async fn test_cannot_move_occupied() {
     game.last_roll = 14;
     game.current_turn = backend::game::PlayerColour::Red;
 
-let state = setup_test_state(game);
+    let state = setup_test_state(game);
     let app = create_routes(state);
 
     let request = Request::builder()
@@ -124,7 +127,7 @@ async fn test_cannot_move_out_of_turn() {
     game.last_roll = 14;
     game.current_turn = backend::game::PlayerColour::Blue;
 
-let state = setup_test_state(game);
+    let state = setup_test_state(game);
     let app = create_routes(state);
 
     let request = Request::builder()
@@ -148,7 +151,7 @@ async fn test_automatic_turn_change() {
     game.last_roll = 2;
     game.current_turn = backend::game::PlayerColour::Red;
 
-let state = setup_test_state(game);
+    let state = setup_test_state(game);
     let app = create_routes(state);
 
     let request = Request::builder()

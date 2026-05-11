@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use axum::{
     Json, Router,
@@ -6,10 +6,13 @@ use axum::{
     http::StatusCode,
     routing::{get, post},
 };
+use serde_json::{Value, json};
 use tower_http::cors::CorsLayer;
 
 use crate::{
-    ServerState, game::GameState, requests::{JoinRequest, MoveRequest}
+    ServerState,
+    game::GameState,
+    requests::{JoinRequest, MoveRequest},
 };
 
 pub fn create_routes(state: Arc<ServerState>) -> Router {
@@ -22,8 +25,11 @@ pub fn create_routes(state: Arc<ServerState>) -> Router {
         .with_state(state)
 }
 
-pub async fn roll_dice_handler(Path(game_id): Path<String>, State(state): State<Arc<ServerState>>) -> Result<Json<GameState>, StatusCode> {
-let games = state.games.lock().unwrap();
+pub async fn roll_dice_handler(
+    Path(game_id): Path<String>,
+    State(state): State<Arc<ServerState>>,
+) -> Result<Json<GameState>, StatusCode> {
+    let games = state.games.lock().unwrap();
 
     if let Some(game_mutex) = games.get(&game_id) {
         let mut game = game_mutex.lock().unwrap();
@@ -35,11 +41,11 @@ let games = state.games.lock().unwrap();
 }
 
 pub async fn move_player_handler(
-Path(game_id): Path<String>, 
+    Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
     Json(payload): Json<MoveRequest>,
 ) -> Result<Json<GameState>, StatusCode> {
-let games = state.games.lock().unwrap();
+    let games = state.games.lock().unwrap();
 
     if let Some(game_mutex) = games.get(&game_id) {
         let mut game = game_mutex.lock().unwrap();
@@ -53,8 +59,11 @@ let games = state.games.lock().unwrap();
     }
 }
 
-pub async fn get_state_handler(Path(game_id): Path<String>, State(state): State<Arc<ServerState>>) -> Result<Json<GameState>, StatusCode> {
-let games = state.games.lock().unwrap();
+pub async fn get_state_handler(
+    Path(game_id): Path<String>,
+    State(state): State<Arc<ServerState>>,
+) -> Result<Json<GameState>, StatusCode> {
+    let games = state.games.lock().unwrap();
 
     if let Some(game_mutex) = games.get(&game_id) {
         let game = game_mutex.lock().unwrap();
@@ -65,18 +74,26 @@ let games = state.games.lock().unwrap();
 }
 
 pub async fn add_player_handler(
-Path(game_id): Path<String>, 
+    Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
     Json(payload): Json<JoinRequest>,
 ) -> Result<Json<GameState>, StatusCode> {
-let games = state.games.lock().unwrap();
+    let games = state.games.lock().unwrap();
 
     if let Some(game_mutex) = games.get(&game_id) {
         let mut game = game_mutex.lock().unwrap();
-    let new_id = (game.players.len() as u32) + 1;
-    game.add_player(new_id, payload.colour, payload.class);
+        let new_id = (game.players.len() as u32) + 1;
+        game.add_player(new_id, payload.colour, payload.class);
         Ok(Json(game.clone()))
     } else {
         Err(StatusCode::NOT_FOUND)
     }
+}
+
+pub async fn create_game(State(state): State<Arc<ServerState>>) -> Json<Value> {
+    let mut games = state.games.lock().unwrap();
+    let game_id = format!("{:x}", rand::random::<u16>());
+    let new_game = Arc::new(Mutex::new(GameState::new(8, 8)));
+    games.insert(game_id.clone(), new_game);
+    Json(json!({ "game_id": game_id }))
 }
