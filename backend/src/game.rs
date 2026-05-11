@@ -84,6 +84,14 @@ impl GameState {
         player.x = target_x;
         player.y = target_y;
 
+        if let Some(index) = self
+            .players
+            .iter()
+            .position(|p| p.colour == self.current_turn)
+        {
+            let next_index = (index + 1) % self.players.len();
+            self.current_turn = self.players[next_index].colour.clone();
+        }
         self.last_roll = 0;
 
         Ok(())
