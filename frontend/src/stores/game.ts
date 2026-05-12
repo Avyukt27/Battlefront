@@ -104,10 +104,56 @@ export const useGameStore = defineStore('game', () => {
     selectedCard.value = cardId;
   }
 
-  async function useCard(targetPlayerId: number) {
+  async function useCard(targetX: number, targetY: number) {
     if (!selectedCard.value) return;
 
-    await fetch(`/api/`);
+    const response = await fetch(`http://localhost:3000/api/use/${gameId.value}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        card_id: selectedCard.value,
+        attacker_id: myPlayerId.value,
+        target_pos: [targetX, targetY],
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.warn('Card rejected:', errorText);
+      return;
+    }
+
+    gameState.value = await response.json();
+  }
+
+  async function drawCard() {
+    const response = await fetch(
+      `http://localhost:3000/api/draw/${gameId.value}/${myPlayerId.value}`,
+      { method: 'POST' },
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.warn('Could not end turn:', errorText);
+      return;
+    }
+
+    gameState.value = await response.json();
+  }
+
+  async function endTurn() {
+    const response = await fetch(
+      `http://localhost:3000/api/end_turn/${gameId.value}/${myPlayerId.value}`,
+      { method: 'POST' },
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.warn('Could not end turn:', errorText);
+      return;
+    }
+
+    gameState.value = await response.json();
   }
 
   return {
@@ -121,5 +167,9 @@ export const useGameStore = defineStore('game', () => {
     makeMove,
     rollDice,
     leaveGame,
+    selectCard,
+    useCard,
+    drawCard,
+    endTurn,
   };
 });

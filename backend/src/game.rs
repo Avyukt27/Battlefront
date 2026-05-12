@@ -97,6 +97,7 @@ impl GameState {
         let player = self.get_player_mut(player_id).unwrap();
         player.x = target_x;
         player.y = target_y;
+        self.last_roll = 0;
 
         Ok(())
     }
@@ -118,7 +119,6 @@ impl GameState {
             player.status_effects.retain(|e| e.duration > 0);
         }
 
-        self.last_roll = 0;
         if let Some(index) = self
             .players
             .iter()
