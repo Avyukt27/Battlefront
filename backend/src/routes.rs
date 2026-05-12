@@ -12,7 +12,7 @@ use tower_http::cors::CorsLayer;
 use crate::{
     ServerState,
     game::{GameState, PlayerColour},
-    requests::{JoinRequest, MoveRequest},
+    requests::{JoinRequest, MoveRequest, UseCardRequest},
 };
 
 pub fn create_routes(state: Arc<ServerState>) -> Router {
@@ -22,6 +22,12 @@ pub fn create_routes(state: Arc<ServerState>) -> Router {
         .route("/api/move/{game_id}", post(move_player_handler))
         .route("/api/join/{game_id}", post(join_game_handler))
         .route("/api/create", post(create_game_handler))
+        .route("/api/draw/{game_id}/{player_id}", post(draw_card_handler))
+        .route("/api/use/{game_id}", post(use_card_handler))
+        .route(
+            "/api/end_turn/{game_id}/{player_id}",
+            post(end_turn_handler),
+        )
         .layer(CorsLayer::permissive())
         .with_state(state)
 }
@@ -31,14 +37,14 @@ pub async fn roll_dice_handler(
     State(state): State<Arc<ServerState>>,
 ) -> Result<Json<GameState>, StatusCode> {
     let games = state.games.lock().unwrap();
+    let mut game = games
+        .get(&game_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .lock()
+        .unwrap();
 
-    if let Some(game_mutex) = games.get(&game_id) {
-        let mut game = game_mutex.lock().unwrap();
-        let _ = game.roll_dice();
-        Ok(Json(game.clone()))
-    } else {
-        Err(StatusCode::NOT_FOUND)
-    }
+    let _ = game.roll_dice();
+    Ok(Json(game.clone()))
 }
 
 pub async fn move_player_handler(
@@ -47,16 +53,15 @@ pub async fn move_player_handler(
     Json(payload): Json<MoveRequest>,
 ) -> Result<Json<GameState>, StatusCode> {
     let games = state.games.lock().unwrap();
+    let mut game = games
+        .get(&game_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .lock()
+        .unwrap();
 
-    if let Some(game_mutex) = games.get(&game_id) {
-        let mut game = game_mutex.lock().unwrap();
-
-        match game.try_move(payload.player_id, payload.target_x, payload.target_y) {
-            Ok(_) => Ok(Json(game.clone())),
-            Err(_) => Err(StatusCode::BAD_REQUEST),
-        }
-    } else {
-        Err(StatusCode::NOT_FOUND)
+    match game.try_move(payload.player_id, payload.target_x, payload.target_y) {
+        Ok(_) => Ok(Json(game.clone())),
+        Err(_) => Err(StatusCode::BAD_REQUEST),
     }
 }
 
@@ -65,13 +70,13 @@ pub async fn get_state_handler(
     State(state): State<Arc<ServerState>>,
 ) -> Result<Json<GameState>, StatusCode> {
     let games = state.games.lock().unwrap();
+    let game = games
+        .get(&game_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .lock()
+        .unwrap();
 
-    if let Some(game_mutex) = games.get(&game_id) {
-        let game = game_mutex.lock().unwrap();
-        Ok(Json(game.clone()))
-    } else {
-        Err(StatusCode::NOT_FOUND)
-    }
+    Ok(Json(game.clone()))
 }
 
 pub async fn join_game_handler(
@@ -80,33 +85,113 @@ pub async fn join_game_handler(
     Json(payload): Json<JoinRequest>,
 ) -> Result<Json<Value>, StatusCode> {
     let games = state.games.lock().unwrap();
+    let mut game = games
+        .get(&game_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .lock()
+        .unwrap();
 
-    if let Some(game_mutex) = games.get(&game_id) {
-        let mut game = game_mutex.lock().unwrap();
-        let new_id = (game.players.len() as u32) + 1;
+    let new_id = (game.players.len() as u32) + 1;
 
-        let player_count = game.players.len();
-        let player_colour = match player_count {
-            0 => Some(PlayerColour::Red),
-            1 => Some(PlayerColour::Blue),
-            2 => Some(PlayerColour::Green),
-            _ => None,
-        };
-        if let Some(colour) = player_colour {
-            game.add_player(new_id, colour, payload.class);
-            Ok(Json(json!({"player_id": new_id, "state": *game})))
-        } else {
-            Err(StatusCode::TOO_MANY_REQUESTS)
-        }
+    let player_count = game.players.len();
+    let player_colour = match player_count {
+        0 => Some(PlayerColour::Red),
+        1 => Some(PlayerColour::Blue),
+        2 => Some(PlayerColour::Green),
+        _ => None,
+    };
+    if let Some(colour) = player_colour {
+        game.add_player(new_id, colour, payload.class);
+        Ok(Json(json!({"player_id": new_id, "state": *game})))
     } else {
-        Err(StatusCode::NOT_FOUND)
+        Err(StatusCode::TOO_MANY_REQUESTS)
     }
 }
 
 pub async fn create_game_handler(State(state): State<Arc<ServerState>>) -> Json<Value> {
     let mut games = state.games.lock().unwrap();
     let game_id = format!("{:x}", rand::random::<u16>());
-    let new_game = Arc::new(Mutex::new(GameState::new(8, 8)));
-    games.insert(game_id.clone(), new_game);
+    let mut new_game = GameState::new(8, 8);
+    new_game.initialise_deck();
+    games.insert(game_id.clone(), Arc::new(Mutex::new(new_game)));
     Json(json!({ "game_id": game_id }))
+}
+
+pub async fn draw_card_handler(
+    Path((game_id, player_id)): Path<(String, u32)>,
+    State(state): State<Arc<ServerState>>,
+) -> Result<Json<GameState>, StatusCode> {
+    let games = state.games.lock().unwrap();
+    let mut game = games
+        .get(&game_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .lock()
+        .unwrap();
+
+    if let Some(player) = game.clone().players.iter_mut().find(|p| p.id == player_id) {
+        if player.cards.len() >= 3 {
+            return Err(StatusCode::BAD_REQUEST);
+        }
+
+        if let Some(mut new_card) = game.deck.pop() {
+            new_card.id = uuid::Uuid::new_v4().to_string();
+            player.cards.push(new_card);
+        }
+    }
+
+    Ok(Json(game.clone()))
+}
+
+pub async fn use_card_handler(
+    Path(game_id): Path<String>,
+    State(state): State<Arc<ServerState>>,
+    Json(payload): Json<UseCardRequest>,
+) -> Result<Json<GameState>, StatusCode> {
+    let games = state.games.lock().unwrap();
+    let mut game = games
+        .get(&game_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .lock()
+        .unwrap();
+
+    let attacker_colour = game
+        .players
+        .iter()
+        .find(|p| p.id == payload.attacker_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .colour
+        .clone();
+
+    if game.current_turn != attacker_colour {
+        return Err(StatusCode::FORBIDDEN);
+    }
+
+    game.use_card(&payload.card_id, payload.attacker_id, payload.target_pos);
+    Ok(Json(game.clone()))
+}
+
+pub async fn end_turn_handler(
+    Path((game_id, player_id)): Path<(String, u32)>,
+    State(state): State<Arc<ServerState>>,
+) -> Result<Json<GameState>, StatusCode> {
+    let games = state.games.lock().unwrap();
+    let mut game = games
+        .get(&game_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .lock()
+        .unwrap();
+    let player_colour = game
+        .players
+        .iter()
+        .find(|p| p.id == player_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .colour
+        .clone();
+
+    if player_colour != game.current_turn {
+        return Err(StatusCode::FORBIDDEN);
+    }
+
+    game.next_turn();
+    Ok(Json(game.clone()))
 }

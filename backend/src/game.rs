@@ -1,5 +1,7 @@
-use rand::RngExt;
+use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
+
+use crate::models::{ActiveEffect, Card, CardEffect, Status};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum PlayerColour {
@@ -14,16 +16,21 @@ pub struct Player {
     pub colour: PlayerColour,
     pub x: u8,
     pub y: u8,
+    pub health: i32,
+    pub max_health: i32,
+    pub status_effects: Vec<ActiveEffect>,
     pub class: String,
+    pub cards: Vec<Card>,
 }
 
 #[derive(Debug, Serialize, Clone)]
 pub struct GameState {
     pub players: Vec<Player>,
     pub current_turn: PlayerColour,
-    pub last_roll: u8,
+    pub last_roll: i16,
     pub width: u8,
     pub height: u8,
+    pub deck: Vec<Card>,
 }
 
 impl GameState {
@@ -34,6 +41,7 @@ impl GameState {
             last_roll: 0,
             width,
             height,
+            deck: Vec::new(),
         }
     }
 
@@ -41,10 +49,18 @@ impl GameState {
         self.players.iter_mut().find(|p| p.id == id)
     }
 
-    pub fn roll_dice(&mut self) -> u8 {
-        let mut rng = rand::rng();
-        self.last_roll = rng.random_range(1..=6);
-        self.last_roll
+    pub fn roll_dice(&mut self) -> i16 {
+        let modifier = if self.players.iter().any(|p| {
+            p.colour == self.current_turn
+                && p.status_effects.iter().any(|e| e.status == Status::Bleed)
+        }) {
+            -1i16
+        } else {
+            0i16
+        };
+
+        self.last_roll = rand::random_range(1..=6);
+        (self.last_roll + modifier).max(0)
     }
 
     pub fn try_move(&mut self, player_id: u32, target_x: u8, target_y: u8) -> Result<(), String> {
@@ -82,6 +98,26 @@ impl GameState {
         player.x = target_x;
         player.y = target_y;
 
+        Ok(())
+    }
+
+    pub fn next_turn(&mut self) {
+        if let Some(player) = self
+            .players
+            .iter_mut()
+            .find(|p| p.colour == self.current_turn)
+        {
+            for effect in player.status_effects.iter_mut() {
+                match effect.status {
+                    Status::Poison => player.health = player.health.saturating_sub(1),
+                    _ => {}
+                }
+                effect.duration = effect.duration.saturating_sub(1);
+            }
+
+            player.status_effects.retain(|e| e.duration > 0);
+        }
+
         self.last_roll = 0;
         if let Some(index) = self
             .players
@@ -91,8 +127,6 @@ impl GameState {
             let next_index = (index + 1) % self.players.len();
             self.current_turn = self.players[next_index].colour.clone();
         }
-
-        Ok(())
     }
 
     pub fn add_player(&mut self, id: u32, colour: PlayerColour, class: String) {
@@ -107,7 +141,123 @@ impl GameState {
             colour,
             x: start_x,
             y: start_y,
+            health: 20,
+            max_health: 20,
+            status_effects: Vec::new(),
             class,
+            cards: Vec::new(),
         });
+    }
+
+    pub fn use_card(&mut self, card_id: &str, attacker_id: u32, target_pos: (u8, u8)) {
+        let mut card_to_use: Option<Card> = None;
+        let mut attacker_pos = (0u8, 0u8);
+
+        if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
+            attacker_pos = (attacker.x, attacker.y);
+            if let Some(idx) = attacker.cards.iter().position(|c| c.id == card_id) {
+                card_to_use = Some(attacker.cards.remove(idx));
+            }
+        }
+
+        let card = match card_to_use {
+            Some(c) => c,
+            None => return,
+        };
+
+        let distance = (attacker_pos.0 as i16 - target_pos.0 as i16).abs()
+            + (attacker_pos.1 as i16 - target_pos.1 as i16).abs();
+
+        let mut hit_landed = true;
+        for effect in &card.effects {
+            if let CardEffect::SkillCheck {
+                threshold,
+                max_range,
+            } = effect
+            {
+                if distance > *max_range as i16 {
+                    hit_landed = false;
+                } else if distance > 1 {
+                    let roll = rand::random_range(1..=6) as u8;
+                    if roll < *threshold {
+                        hit_landed = false;
+                    }
+                }
+            }
+        }
+
+        if !hit_landed {
+            return;
+        }
+
+        let radius = if card.name == "Poison Bomb" {
+            1i16
+        } else {
+            0i16
+        };
+
+        for player in self.players.iter_mut() {
+            let dx = (player.x as i16 - target_pos.0 as i16).abs();
+            let dy = (player.y as i16 - target_pos.1 as i16).abs();
+            let dist_to_impact = dx.max(dy);
+
+            if dist_to_impact <= radius {
+                for effect in &card.effects {
+                    match effect {
+                        CardEffect::Damage { power } => {
+                            player.health = player.health.saturating_sub(*power);
+                        }
+                        CardEffect::ApplyStatus { status, duration } => {
+                            if let Some(s) = player
+                                .status_effects
+                                .iter_mut()
+                                .find(|e| e.status == *status)
+                            {
+                                s.duration = s.duration.max(*duration);
+                            } else {
+                                player.status_effects.push(ActiveEffect {
+                                    status: *status,
+                                    duration: *duration,
+                                });
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            }
+
+            if player.id == attacker_id {
+                for effect in &card.effects {
+                    match effect {
+                        CardEffect::Heal { amount } => {
+                            player.health = (player.health + amount).min(player.max_health);
+                        }
+                        CardEffect::CureStatus { status } => {
+                            player.status_effects.retain(|e| e.status != *status);
+                        }
+                        _ => {}
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn initialise_deck(&mut self) {
+        let mut new_deck: Vec<Card> = Vec::new();
+
+        for _ in 0..4 {
+            new_deck.push(Card::create_rock());
+        }
+        for _ in 0..3 {
+            new_deck.push(Card::create_stick());
+        }
+        for _ in 0..3 {
+            new_deck.push(Card::create_bandage());
+        }
+
+        let mut rng = rand::rng();
+        new_deck.shuffle(&mut rng);
+
+        self.deck = new_deck;
     }
 }

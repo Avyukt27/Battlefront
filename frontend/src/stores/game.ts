@@ -1,20 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-
-interface Player {
-  id: number;
-  colour: 'Red' | 'Blue' | 'Green' | 'Yellow';
-  x: number;
-  y: number;
-}
-
-interface GameState {
-  players: Player[];
-  current_turn: string;
-  last_roll: number;
-  width: number;
-  height: number;
-}
+import type { GameState } from './models';
 
 export const useGameStore = defineStore('game', () => {
   const gameState = ref<GameState | null>(null);
@@ -25,6 +11,7 @@ export const useGameStore = defineStore('game', () => {
       : null,
   );
   const isRolling = ref(false);
+  const selectedCard = ref<string | null>(null);
 
   async function createGame() {
     const response = await fetch('http://localhost:3000/api/create', {
@@ -111,6 +98,16 @@ export const useGameStore = defineStore('game', () => {
     localStorage.removeItem('saved_game_id');
     localStorage.removeItem('saved_player_id');
     window.location.reload();
+  }
+
+  function selectCard(cardId: string) {
+    selectedCard.value = cardId;
+  }
+
+  async function useCard(targetPlayerId: number) {
+    if (!selectedCard.value) return;
+
+    await fetch(`/api/`);
   }
 
   return {
