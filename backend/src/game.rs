@@ -1,7 +1,7 @@
 use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 
-use crate::models::{ActiveEffect, Card, CardEffect};
+use crate::models::{ActiveEffect, Card, CardEffect, Status};
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum PlayerColour {
@@ -27,7 +27,7 @@ pub struct Player {
 pub struct GameState {
     pub players: Vec<Player>,
     pub current_turn: PlayerColour,
-    pub last_roll: u8,
+    pub last_roll: i16,
     pub width: u8,
     pub height: u8,
     pub deck: Vec<Card>,
@@ -49,9 +49,18 @@ impl GameState {
         self.players.iter_mut().find(|p| p.id == id)
     }
 
-    pub fn roll_dice(&mut self) -> u8 {
+    pub fn roll_dice(&mut self) -> i16 {
+        let modifier = if self.players.iter().any(|p| {
+            p.colour == self.current_turn
+                && p.status_effects.iter().any(|e| e.status == Status::Bleed)
+        }) {
+            -1i16
+        } else {
+            0i16
+        };
+
         self.last_roll = rand::random_range(1..=6);
-        self.last_roll
+        (self.last_roll + modifier).max(0)
     }
 
     pub fn try_move(&mut self, player_id: u32, target_x: u8, target_y: u8) -> Result<(), String> {
@@ -89,6 +98,26 @@ impl GameState {
         player.x = target_x;
         player.y = target_y;
 
+        Ok(())
+    }
+
+    pub fn next_turn(&mut self) {
+        if let Some(player) = self
+            .players
+            .iter_mut()
+            .find(|p| p.colour == self.current_turn)
+        {
+            for effect in player.status_effects.iter_mut() {
+                match effect.status {
+                    Status::Poison => player.health = player.health.saturating_sub(1),
+                    _ => {}
+                }
+                effect.duration = effect.duration.saturating_sub(1);
+            }
+
+            player.status_effects.retain(|e| e.duration > 0);
+        }
+
         self.last_roll = 0;
         if let Some(index) = self
             .players
@@ -98,8 +127,6 @@ impl GameState {
             let next_index = (index + 1) % self.players.len();
             self.current_turn = self.players[next_index].colour.clone();
         }
-
-        Ok(())
     }
 
     pub fn add_player(&mut self, id: u32, colour: PlayerColour, class: String) {

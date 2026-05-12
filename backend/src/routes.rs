@@ -23,6 +23,7 @@ pub fn create_routes(state: Arc<ServerState>) -> Router {
         .route("/api/join/{game_id}", post(join_game_handler))
         .route("/api/create", post(create_game_handler))
         .route("/api/draw/{game_id}/{player_id}", post(draw_card_handler))
+        .route("/api/use/{game_id}", post(use_card_handler))
         .layer(CorsLayer::permissive())
         .with_state(state)
 }
@@ -137,7 +138,7 @@ pub async fn draw_card_handler(
     Ok(Json(game.clone()))
 }
 
-pub async fn play_card_handler(
+pub async fn use_card_handler(
     Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
     Json(payload): Json<UseCardRequest>,
