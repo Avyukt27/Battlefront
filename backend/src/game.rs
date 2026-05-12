@@ -138,7 +138,8 @@ impl GameState {
 
         let mut cards: Vec<Card> = Vec::new();
         for _ in 0..3 {
-            if let Some(card) = self.deck.pop() {
+            if let Some(mut card) = self.deck.pop() {
+                card.id = uuid::Uuid::new_v4().to_string();
                 cards.push(card);
             }
         }

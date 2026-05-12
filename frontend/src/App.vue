@@ -61,7 +61,7 @@ onUnmounted(() => {
             </h2>
 
             <div class="flex flex-col gap-4 items-center">
-              <GameCard v-for="card in myPlayer?.cards" :key="card.id" :card="card.name" />
+              <GameCard v-for="card in myPlayer?.cards" :key="card.id" :id="card.id" :name="card.name" />
             </div>
           </div>
         </aside>
