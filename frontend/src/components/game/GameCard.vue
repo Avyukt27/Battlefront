@@ -37,7 +37,10 @@ const cardActive = computed(() => ({
   <div ref="card" class="ease-outduration<300> transition-all">
     <div :style="containerStyle">
       <div :style="[isSelected ? cardActive : cardBase]" @click="store.selectCard(props.id)">
-        <img src="https://jaromvogel.com/images/design/jumping_rabbit/page2layer0.png" :alt="name" />
+        <img
+          src="https://jaromvogel.com/images/design/jumping_rabbit/page2layer0.png"
+          :alt="name"
+        />
       </div>
     </div>
   </div>

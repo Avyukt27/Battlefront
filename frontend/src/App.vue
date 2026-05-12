@@ -36,7 +36,9 @@ onUnmounted(() => {
     <LobbyView v-if="!store.gameId" />
 
     <section v-else-if="!store.gameState" class="flex flex-col items-center justify-center py-20">
-      <div class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+      <div
+        class="w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"
+      ></div>
       <p class="mt-4 text-slate-500 italic">Connecting to game...</p>
     </section>
 
@@ -54,14 +56,21 @@ onUnmounted(() => {
         </div>
 
         <aside class="flex flex-col gap-6">
-          <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm">
+          <div
+            class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm min-w-28 min-h-127"
+          >
             <h2 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
               <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
               Your Hand
             </h2>
 
             <div class="flex flex-col gap-4 items-center">
-              <GameCard v-for="card in myPlayer?.cards" :key="card.id" :id="card.id" :name="card.name" />
+              <GameCard
+                v-for="card in myPlayer?.cards"
+                :key="card.id"
+                :id="card.id"
+                :name="card.name"
+              />
             </div>
           </div>
         </aside>

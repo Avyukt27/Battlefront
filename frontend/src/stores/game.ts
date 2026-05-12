@@ -11,6 +11,7 @@ export const useGameStore = defineStore('game', () => {
       : null,
   );
   const isRolling = ref(false);
+  const isDrawing = ref(false);
   const selectedCardId = ref<string | null>(null);
 
   async function createGame() {
@@ -132,18 +133,24 @@ export const useGameStore = defineStore('game', () => {
   }
 
   async function drawCard() {
-    const response = await fetch(
-      `http://localhost:3000/api/draw/${gameId.value}/${myPlayerId.value}`,
-      { method: 'POST' },
+    if (isDrawing.value || !gameId.value) return;
+    isDrawing.value = true;
+
+    console.log(
+      `Sending request to http://localhost:3000/api/draw/${gameId.value}/${myPlayerId.value}`,
     );
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.warn('Could not end turn:', errorText);
-      return;
+    try {
+      const response = await fetch(
+        `http://localhost:3000/api/draw/${gameId.value}/${myPlayerId.value}`,
+        { method: 'POST' },
+      );
+      if (response.ok) {
+        gameState.value = await response.json();
+      }
+    } finally {
+      isDrawing.value = false;
     }
-
-    gameState.value = await response.json();
   }
 
   async function endTurn() {
@@ -166,6 +173,7 @@ export const useGameStore = defineStore('game', () => {
     gameId,
     myPlayerId,
     isRolling,
+    isDrawing,
     selectedCardId,
     createGame,
     joinGame,

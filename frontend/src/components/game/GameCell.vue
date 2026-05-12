@@ -30,11 +30,12 @@ const isTargetable = computed(() => {
   if (!card) return false;
 
   const skillEffect = card.effects.find((e) => 'SkillCheck' in e);
-  if (skillEffect && 'SkillCheck' in skillEffect) {
+  if (skillEffect) {
     const range = skillEffect.SkillCheck.max_range;
     const startX = myPlayer.value.x;
     const startY = myPlayer.value.y;
     const dist = Math.abs(startX - props.x) + Math.abs(startY - props.y);
+    console.log('range: ', range, ', dist: ', dist);
     return dist <= range;
   }
 
@@ -42,8 +43,7 @@ const isTargetable = computed(() => {
 });
 
 const handleMove = () => {
-  if (store.myPlayerId === null) {
-    console.warn('Cannot move: No Player ID assigned.');
+  if (store.myPlayerId === null || store.isDrawing || store.isRolling) {
     return;
   }
 
@@ -56,7 +56,8 @@ const handleMove = () => {
 </script>
 
 <template>
-  <div @click="handleMove"
+  <div
+    @click="handleMove"
     class="relative w-12 h-12 sm:w-16 sm:h-16 bg-slate-800/40 border border-slate-700/10 hover:bg-slate-700/60 transition-all cursor-pointer flex items-center justify-center overflow-hidden"
     :class="[
       isTargetable
@@ -68,15 +69,22 @@ const handleMove = () => {
       !isTargetable && !(isReachable && !store.selectedCardId)
         ? 'bg-slate-800/40 border-slate-700/10 hover:bg-slate-700/60'
         : '',
-    ]">
+    ]"
+  >
     <div v-if="isReachable && !player" class="w-2 h-2 rounded-full bg-indigo-400/40"></div>
-    <div v-if="player" class="w-4/5 h-4/5 rounded-full shadow-2xl transition-all duration-500 transform scale-90 z-10"
+    <div
+      v-if="player"
+      class="w-4/5 h-4/5 rounded-full shadow-2xl transition-all duration-500 transform scale-90 z-10"
       :class="{
         'bg-red-600 border-2 border-red-400': player.colour === 'Red',
         'bg-blue-600 border-2 border-blue-400': player.colour === 'Blue',
         'bg-green-600 border-2 border-green-400': player.colour === 'Green',
-      }">
-      <div v-if="isCurrentTurn" class="absolute inset-0 rounded-full animate-ping bg-white/30"></div>
+      }"
+    >
+      <div
+        v-if="isCurrentTurn"
+        class="absolute inset-0 rounded-full animate-ping bg-white/30"
+      ></div>
     </div>
 
     <span class="absolute bottom-0.5 right-1 text-[8px] text-slate-700 select-none">

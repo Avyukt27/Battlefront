@@ -128,13 +128,22 @@ pub async fn draw_card_handler(
         .lock()
         .unwrap();
 
-    if let Some(player) = game.clone().players.iter_mut().find(|p| p.id == player_id) {
-        if player.cards.len() >= 3 {
-            return Err(StatusCode::BAD_REQUEST);
-        }
+    let can_draw = game
+        .players
+        .iter()
+        .find(|p| p.id == player_id)
+        .map(|p| p.cards.len() < 3)
+        .unwrap_or(false);
 
-        if let Some(mut new_card) = game.deck.pop() {
-            new_card.id = uuid::Uuid::new_v4().to_string();
+    if !can_draw {
+        return Err(StatusCode::BAD_REQUEST);
+    }
+
+    if let Some(mut new_card) = game.deck.pop() {
+        new_card.id = uuid::Uuid::new_v4().to_string();
+        let card_name = new_card.name.clone();
+
+        if let Some(player) = game.players.iter_mut().find(|p| p.id == player_id) {
             player.cards.push(new_card);
         }
     }
