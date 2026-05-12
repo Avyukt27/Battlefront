@@ -24,6 +24,10 @@ pub fn create_routes(state: Arc<ServerState>) -> Router {
         .route("/api/create", post(create_game_handler))
         .route("/api/draw/{game_id}/{player_id}", post(draw_card_handler))
         .route("/api/use/{game_id}", post(use_card_handler))
+        .route(
+            "/api/end_turn/{game_id}/{player_id}",
+            post(end_turn_handler),
+        )
         .layer(CorsLayer::permissive())
         .with_state(state)
 }
@@ -163,5 +167,31 @@ pub async fn use_card_handler(
     }
 
     game.use_card(&payload.card_id, payload.attacker_id, payload.target_pos);
+    Ok(Json(game.clone()))
+}
+
+pub async fn end_turn_handler(
+    Path((game_id, player_id)): Path<(String, u32)>,
+    State(state): State<Arc<ServerState>>,
+) -> Result<Json<GameState>, StatusCode> {
+    let games = state.games.lock().unwrap();
+    let mut game = games
+        .get(&game_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .lock()
+        .unwrap();
+    let player_colour = game
+        .players
+        .iter()
+        .find(|p| p.id == player_id)
+        .ok_or(StatusCode::NOT_FOUND)?
+        .colour
+        .clone();
+
+    if player_colour != game.current_turn {
+        return Err(StatusCode::FORBIDDEN);
+    }
+
+    game.next_turn();
     Ok(Json(game.clone()))
 }
