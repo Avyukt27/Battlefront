@@ -1,0 +1,41 @@
+export enum Status {
+  Bleed,
+  Poison,
+}
+
+export type CardEffect =
+  | { Damage: { power: number } }
+  | { Heal: { amount: number } }
+  | { SkillCheck: { threshold: number; max_range: number } }
+  | { ApplyStatus: { status: Status; duration: number } }
+  | { CureStatus: { status: Status } };
+
+export interface Card {
+  id: number;
+  name: string;
+  effects: CardEffect[];
+}
+
+export interface ActiveEffect {
+  status: Status;
+  duration: number;
+}
+
+export interface Player {
+  id: number;
+  colour: 'Red' | 'Blue' | 'Green';
+  x: number;
+  y: number;
+  health: number;
+  max_health: number;
+  status_effects: ActiveEffect[];
+  class: string;
+}
+
+export interface GameState {
+  players: Player[];
+  current_turn: string;
+  last_roll: number;
+  width: number;
+  height: number;
+}

@@ -122,42 +122,94 @@ impl GameState {
         });
     }
 
-    pub fn use_card(card: &Card, attacker: &mut Player, target: &mut Player) {
-        let mut hit_confirmed = true;
-        let distance = (attacker.x as i16 - target.x as i16).abs()
-            + (attacker.y as i16 - target.y as i16).abs();
+    pub fn use_card(&mut self, card_id: &str, attacker_id: u32, target_pos: (u8, u8)) {
+        let mut card_to_use: Option<Card> = None;
+        let mut attacker_pos = (0u8, 0u8);
 
-        for effect in &card.effects {
-            if !hit_confirmed {
-                break;
+        if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
+            attacker_pos = (attacker.x, attacker.y);
+            if let Some(idx) = attacker.cards.iter().position(|c| c.id == card_id) {
+                card_to_use = Some(attacker.cards.remove(idx));
             }
+        }
 
-            match effect {
-                CardEffect::SkillCheck {
-                    threshold,
-                    max_range,
-                } => {
-                    if distance > *max_range as i16 {
-                        hit_confirmed = false;
-                    } else if distance > 1 {
-                        let roll = rand::random_range(1..=6) as u8;
-                        if roll < *threshold {
-                            hit_confirmed = false;
-                        }
+        let card = match card_to_use {
+            Some(c) => c,
+            None => return,
+        };
+
+        let distance = (attacker_pos.0 as i16 - target_pos.0 as i16).abs()
+            + (attacker_pos.1 as i16 - target_pos.1 as i16).abs();
+
+        let mut hit_landed = true;
+        for effect in &card.effects {
+            if let CardEffect::SkillCheck {
+                threshold,
+                max_range,
+            } = effect
+            {
+                if distance > *max_range as i16 {
+                    hit_landed = false;
+                } else if distance > 1 {
+                    let roll = rand::random_range(1..=6) as u8;
+                    if roll < *threshold {
+                        hit_landed = false;
                     }
                 }
-                CardEffect::Damage { power } => target.health -= power,
-                CardEffect::Heal { amount } => {
-                    attacker.health = (attacker.health + amount).min(attacker.max_health)
+            }
+        }
+
+        if !hit_landed {
+            return;
+        }
+
+        let radius = if card.name == "Poison Bomb" {
+            1i16
+        } else {
+            0i16
+        };
+
+        for player in self.players.iter_mut() {
+            let dx = (player.x as i16 - target_pos.0 as i16).abs();
+            let dy = (player.y as i16 - target_pos.1 as i16).abs();
+            let dist_to_impact = dx.max(dy);
+
+            if dist_to_impact <= radius {
+                for effect in &card.effects {
+                    match effect {
+                        CardEffect::Damage { power } => {
+                            player.health = player.health.saturating_sub(*power);
+                        }
+                        CardEffect::ApplyStatus { status, duration } => {
+                            if let Some(s) = player
+                                .status_effects
+                                .iter_mut()
+                                .find(|e| e.status == *status)
+                            {
+                                s.duration = s.duration.max(*duration);
+                            } else {
+                                player.status_effects.push(ActiveEffect {
+                                    status: *status,
+                                    duration: *duration,
+                                });
+                            }
+                        }
+                        _ => {}
+                    }
                 }
-                CardEffect::ApplyStatus { status, duration } => {
-                    target.status_effects.push(ActiveEffect {
-                        status: status.clone(),
-                        duration: *duration,
-                    })
-                }
-                CardEffect::CureStatus { status } => {
-                    attacker.status_effects.retain(|e| e.status != *status);
+            }
+
+            if player.id == attacker_id {
+                for effect in &card.effects {
+                    match effect {
+                        CardEffect::Heal { amount } => {
+                            player.health = (player.health + amount).min(player.max_health);
+                        }
+                        CardEffect::CureStatus { status } => {
+                            player.status_effects.retain(|e| e.status != *status);
+                        }
+                        _ => {}
+                    }
                 }
             }
         }
@@ -178,5 +230,7 @@ impl GameState {
 
         let mut rng = rand::rng();
         new_deck.shuffle(&mut rng);
+
+        self.deck = new_deck;
     }
 }
