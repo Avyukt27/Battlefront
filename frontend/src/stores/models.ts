@@ -11,7 +11,7 @@ export type CardEffect =
   | { CureStatus: { status: Status } };
 
 export interface Card {
-  id: number;
+  id: string;
   name: string;
   effects: CardEffect[];
 }
@@ -30,6 +30,7 @@ export interface Player {
   max_health: number;
   status_effects: ActiveEffect[];
   class: string;
+  cards: Card[];
 }
 
 export interface GameState {

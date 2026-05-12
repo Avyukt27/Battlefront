@@ -10,7 +10,7 @@ const roll = computed(() => store.gameState?.last_roll);
 </script>
 
 <template>
-  <div class="flex gap-4">
+  <div class="flex gap-4 justify-center">
     <button @click="store.fetchState"
       class="px-6 py-2 bg-slate-800 hover:bg-slate-700 rounded-md border border-slate-700 transition-colors">
       Sync

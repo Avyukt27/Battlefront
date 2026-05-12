@@ -53,22 +53,21 @@ onUnmounted(() => {
           <GameBoard />
         </div>
 
-        <aside class="w-full lg:w-80 flex flex-col gap-6">
-          <div class="bg-slate-900/50 p-6 rounded-2xl border border-slate-800 backdrop-blur-sm">
+        <aside class="flex flex-col gap-6">
+          <div class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm">
             <h2 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
               <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
               Your Hand
             </h2>
 
             <div class="flex flex-col gap-4 items-center">
-              <GameCard v-for="card in myPlayer.cards" :key="card.id" :card="card" />
-            </div>
-
-            <div class="mt-8 border-t border-slate-800 pt-6">
-              <GameControls />
+              <GameCard v-for="card in myPlayer?.cards" :key="card.id" :card="card.name" />
             </div>
           </div>
         </aside>
+      </div>
+      <div class="border-t border-slate-800 pt-6 min-w-full">
+        <GameControls />
       </div>
     </section>
   </div>

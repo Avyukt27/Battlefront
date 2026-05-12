@@ -136,6 +136,13 @@ impl GameState {
             PlayerColour::Green => (0, self.height - 1),
         };
 
+        let mut cards: Vec<Card> = Vec::new();
+        for _ in 0..3 {
+            if let Some(card) = self.deck.pop() {
+                cards.push(card);
+            }
+        }
+
         self.players.push(Player {
             id,
             colour,
@@ -145,7 +152,7 @@ impl GameState {
             max_health: 20,
             status_effects: Vec::new(),
             class,
-            cards: Vec::new(),
+            cards,
         });
     }
 
@@ -248,7 +255,7 @@ impl GameState {
         for _ in 0..4 {
             new_deck.push(Card::create_rock());
         }
-        for _ in 0..3 {
+        for _ in 0..5 {
             new_deck.push(Card::create_stick());
         }
         for _ in 0..3 {
