@@ -107,11 +107,9 @@ async fn test_automatic_turn_change() {
 
     let request = Request::builder()
         .method(http::Method::POST)
-        .uri(format!("/api/move/{}", TEST_ID))
+        .uri(format!("/api/end_turn/{}/{}", TEST_ID, 1))
         .header(http::header::CONTENT_TYPE, "application/json")
-        .body(Body::from(
-            json!({"player_id": 1, "target_x": 2, "target_y": 0}).to_string(),
-        ))
+        .body(Body::empty())
         .unwrap();
 
     let response = app.oneshot(request).await.unwrap();
