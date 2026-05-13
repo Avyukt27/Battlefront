@@ -120,11 +120,11 @@ pub async fn create_game_handler(State(state): State<Arc<ServerState>>) -> Json<
 pub async fn draw_card_handler(
     Path((game_id, player_id)): Path<(String, u32)>,
     State(state): State<Arc<ServerState>>,
-) -> Result<Json<GameState>, StatusCode> {
+) -> Result<Json<GameState>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let mut game = games
         .get(&game_id)
-        .ok_or(StatusCode::NOT_FOUND)?
+        .ok_or((StatusCode::NOT_FOUND, "Game not found".to_string()))?
         .lock()
         .unwrap();
 
@@ -136,7 +136,7 @@ pub async fn draw_card_handler(
         .unwrap_or(false);
 
     if !can_draw {
-        return Err(StatusCode::BAD_REQUEST);
+        return Err((StatusCode::BAD_REQUEST, "Canno draw cards!".to_string()));
     }
 
     if let Some(mut new_card) = game.deck.pop() {
@@ -153,11 +153,11 @@ pub async fn use_card_handler(
     Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
     Json(payload): Json<UseCardRequest>,
-) -> Result<Json<GameState>, StatusCode> {
+) -> Result<Json<GameState>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let mut game = games
         .get(&game_id)
-        .ok_or(StatusCode::NOT_FOUND)?
+        .ok_or((StatusCode::NOT_FOUND, "Game not found".to_string()))?
         .lock()
         .unwrap();
 
@@ -165,38 +165,40 @@ pub async fn use_card_handler(
         .players
         .iter()
         .find(|p| p.id == payload.attacker_id)
-        .ok_or(StatusCode::NOT_FOUND)?
+        .ok_or((StatusCode::NOT_FOUND, "Player not found".to_string()))?
         .colour
         .clone();
 
     if game.current_turn != attacker_colour {
-        return Err(StatusCode::FORBIDDEN);
+        return Err((StatusCode::FORBIDDEN, "Not your turn!".to_string()));
     }
 
-    game.use_card(&payload.card_id, payload.attacker_id, payload.target_pos);
-    Ok(Json(game.clone()))
+    match game.use_card(&payload.card_id, payload.attacker_id, payload.target_pos) {
+        Ok(_) => Ok(Json(game.clone())),
+        Err(e) => Err((StatusCode::BAD_REQUEST, e)),
+    }
 }
 
 pub async fn end_turn_handler(
     Path((game_id, player_id)): Path<(String, u32)>,
     State(state): State<Arc<ServerState>>,
-) -> Result<Json<GameState>, StatusCode> {
+) -> Result<Json<GameState>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let mut game = games
         .get(&game_id)
-        .ok_or(StatusCode::NOT_FOUND)?
+        .ok_or((StatusCode::NOT_FOUND, "Game not found".to_string()))?
         .lock()
         .unwrap();
     let player_colour = game
         .players
         .iter()
         .find(|p| p.id == player_id)
-        .ok_or(StatusCode::NOT_FOUND)?
+        .ok_or((StatusCode::NOT_FOUND, "Player not found".to_string()))?
         .colour
         .clone();
 
     if player_colour != game.current_turn {
-        return Err(StatusCode::FORBIDDEN);
+        return Err((StatusCode::FORBIDDEN, "Not your turn!".to_string()));
     }
 
     game.next_turn();

@@ -157,7 +157,12 @@ impl GameState {
         });
     }
 
-    pub fn use_card(&mut self, card_id: &str, attacker_id: u32, target_pos: (u8, u8)) {
+    pub fn use_card(
+        &mut self,
+        card_id: &str,
+        attacker_id: u32,
+        target_pos: (u8, u8),
+    ) -> Result<(), String> {
         let mut card_to_use: Option<Card> = None;
         let mut attacker_pos = (0u8, 0u8);
 
@@ -168,35 +173,25 @@ impl GameState {
             }
         }
 
-        let card = match card_to_use {
-            Some(c) => c,
-            None => return,
-        };
+        let card = card_to_use.ok_or("Card not found")?;
 
         let distance = (attacker_pos.0 as i16 - target_pos.0 as i16).abs()
             + (attacker_pos.1 as i16 - target_pos.1 as i16).abs();
 
-        let mut range = 0;
-        let mut hit_landed = true;
         for effect in &card.effects {
             if let CardEffect::Range { max_range } = effect {
-                range = *max_range;
-                if distance > range as i16 {
-                    hit_landed = false;
+                if distance > *max_range as i16 {
+                    return Err("Out of range!".to_string());
                 }
             }
             if let CardEffect::SkillCheck { threshold } = effect {
                 if distance > 1 {
                     let roll = rand::random_range(1..=6) as u8;
                     if roll < *threshold {
-                        hit_landed = false;
+                        return Err("Missed attack!".to_string());
                     }
                 }
             }
-        }
-
-        if !hit_landed {
-            return;
         }
 
         let radius = if card.name == "Poison Bomb" {
@@ -249,6 +244,8 @@ impl GameState {
                 }
             }
         }
+
+        Ok(())
     }
 
     pub fn initialise_deck(&mut self) {
