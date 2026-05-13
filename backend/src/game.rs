@@ -129,7 +129,7 @@ impl GameState {
         }
     }
 
-    pub fn add_player(&mut self, id: u32, colour: PlayerColour, class: String) {
+    pub fn add_player(&mut self, id: u32, colour: PlayerColour) -> Result<Player, String> {
         let (start_x, start_y) = match colour {
             PlayerColour::Red => (0, 0),
             PlayerColour::Blue => (self.width - 1, self.height - 1),
@@ -144,7 +144,18 @@ impl GameState {
             }
         }
 
-        self.players.push(Player {
+        let classes = vec!["Gunslinger", "Mage", "Knight", "Assassin", "Arsenist"];
+        let taken_classes: Vec<String> = self.players.iter().map(|p| p.class.clone()).collect();
+        let available_classes: Vec<&&str> = classes
+            .iter()
+            .filter(|class| !taken_classes.contains(&class.to_string()))
+            .collect();
+        if available_classes.is_empty() {
+            return Err("No classses available".to_string());
+        }
+        let index = rand::random_range(0..available_classes.len());
+        let class = available_classes[index].to_string();
+        let player = Player {
             id,
             colour,
             x: start_x,
@@ -154,7 +165,10 @@ impl GameState {
             status_effects: Vec::new(),
             class,
             cards,
-        });
+        };
+
+        self.players.push(player.clone());
+        Ok(player)
     }
 
     pub fn use_card(
@@ -162,7 +176,7 @@ impl GameState {
         card_id: &str,
         attacker_id: u32,
         target_pos: (u8, u8),
-    ) -> Result<(), String> {
+    ) -> Result<bool, String> {
         let (attacker_pos, card_effects, card_name) = {
             let attacker = self
                 .players
@@ -213,7 +227,7 @@ impl GameState {
         }
 
         if !hit_landed {
-            return Ok(());
+            return Ok(false);
         }
 
         let radius = if card_name == "Poison Bomb" {
@@ -267,7 +281,7 @@ impl GameState {
             }
         }
 
-        Ok(())
+        Ok(true)
     }
 
     pub fn initialise_deck(&mut self) {

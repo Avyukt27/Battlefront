@@ -8,11 +8,6 @@ pub struct MoveRequest {
 }
 
 #[derive(Deserialize)]
-pub struct JoinRequest {
-    pub class: String,
-}
-
-#[derive(Deserialize)]
 pub struct UseCardRequest {
     pub card_id: String,
     pub attacker_id: u32,

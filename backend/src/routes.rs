@@ -12,7 +12,7 @@ use tower_http::cors::CorsLayer;
 use crate::{
     ServerState,
     game::{GameState, PlayerColour},
-    requests::{JoinRequest, MoveRequest, UseCardRequest},
+    requests::{MoveRequest, UseCardRequest},
 };
 
 pub fn create_routes(state: Arc<ServerState>) -> Router {
@@ -82,7 +82,6 @@ pub async fn get_state_handler(
 pub async fn join_game_handler(
     Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
-    Json(payload): Json<JoinRequest>,
 ) -> Result<Json<Value>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let mut game = games
@@ -101,8 +100,13 @@ pub async fn join_game_handler(
         _ => None,
     };
     if let Some(colour) = player_colour {
-        game.add_player(new_id, colour, payload.class);
-        Ok(Json(json!({"player_id": new_id, "state": *game})))
+        match game.add_player(new_id, colour) {
+            Ok(_) => Ok(Json(json!({"player_id": new_id, "state": *game}))),
+            Err(_) => Err((
+                StatusCode::NOT_ACCEPTABLE,
+                "No classes available".to_string(),
+            )),
+        }
     } else {
         Err((StatusCode::TOO_MANY_REQUESTS, "Lobby full".to_string()))
     }
@@ -153,7 +157,7 @@ pub async fn use_card_handler(
     Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
     Json(payload): Json<UseCardRequest>,
-) -> Result<Json<GameState>, (StatusCode, String)> {
+) -> Result<Json<(GameState, bool)>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let mut game = games
         .get(&game_id)
@@ -174,7 +178,7 @@ pub async fn use_card_handler(
     }
 
     match game.use_card(&payload.card_id, payload.attacker_id, payload.target_pos) {
-        Ok(_) => Ok(Json(game.clone())),
+        Ok(h) => Ok(Json((game.clone(), h))),
         Err(e) => Err((StatusCode::FORBIDDEN, e)),
     }
 }
