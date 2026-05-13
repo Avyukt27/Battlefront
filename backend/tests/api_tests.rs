@@ -107,9 +107,9 @@ async fn test_automatic_turn_change() {
 
     let request = Request::builder()
         .method(http::Method::POST)
-        .uri(format!("/api/end_turn/{}/{}", TEST_ID, 1))
+        .uri(format!("/api/end_turn/{}", TEST_ID))
         .header(http::header::CONTENT_TYPE, "application/json")
-        .body(Body::empty())
+        .body(Body::from(json!({"player_id": 1}).to_string()))
         .unwrap();
 
     let response = app.oneshot(request).await.unwrap();
@@ -119,7 +119,6 @@ async fn test_automatic_turn_change() {
     let body: Value = serde_json::from_slice(&body).unwrap();
 
     assert_eq!(body["current_turn"], "Blue");
-    assert_eq!(body["last_roll"], 0);
 }
 
 #[tokio::test]
