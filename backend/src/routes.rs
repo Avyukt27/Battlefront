@@ -12,7 +12,6 @@ use tower_http::cors::CorsLayer;
 use crate::{
     ServerState,
     game::GameState,
-    models::PlayerColour,
     requests::{MoveRequest, PlayerRequest, UseCardRequest},
 };
 

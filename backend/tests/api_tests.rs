@@ -97,10 +97,10 @@ async fn test_cannot_move_before_rolling() {
 #[tokio::test]
 async fn test_automatic_turn_change() {
     let mut game = GameState::new(8, 8);
-    let _ = game.add_player(1, backend::game::PlayerColour::Red);
-    let _ = game.add_player(2, backend::game::PlayerColour::Blue);
+    let _ = game.add_player();
+    let _ = game.add_player();
     game.last_roll = 2;
-    game.current_turn = backend::game::PlayerColour::Red;
+    game.current_turn = backend::models::PlayerColour::Red;
 
     let state = setup_test_state(game);
     let app = create_routes(state);
