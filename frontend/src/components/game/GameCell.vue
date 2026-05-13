@@ -15,7 +15,6 @@ const colorMap: Record<string, string> = {
   Blue: 'bg-blue-600 border-blue-400',
   Green: 'bg-green-600 border-green-400',
   Yellow: 'bg-yellow-600 border-yellow-400',
-  Purple: 'bg-purple-600 border-purple-400',
 };
 
 const isReachable = computed(() => {
