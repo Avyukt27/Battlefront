@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import type { GameState } from './models';
+import { gameApi } from '@/api/gameClient';
 
 export const useGameStore = defineStore('game', () => {
   const gameState = ref<GameState | null>(null);
@@ -10,88 +11,115 @@ export const useGameStore = defineStore('game', () => {
       ? Number(localStorage.getItem('saved_player_id'))
       : null,
   );
+
   const isRolling = ref(false);
   const isDrawing = ref(false);
   const selectedCardId = ref<string | null>(null);
-  const doneMoving = ref(false);
-  const donePlaying = ref(false);
+  const lastError = ref<string | null>(null);
+
+  function setError(msg: string) {
+    lastError.value = msg;
+    setTimeout(() => {
+      lastError.value = null;
+    }, 4000);
+  }
+
+  function handleActionError(err: unknown) {
+    if (err instanceof Error) {
+      setError(err.message);
+    } else {
+      setError(String(err));
+    }
+  }
 
   async function createGame() {
-    const response = await fetch('http://localhost:3000/api/create', {
-      method: 'POST',
-    });
-    if (response.ok) {
-      const data = await response.json();
+    try {
+      const data = await gameApi.createGame();
       gameId.value = data.game_id;
+    } catch (err) {
+      setError('Failed to create game');
     }
   }
 
   async function joinGame(id: string, className: string) {
-    const response = await fetch(`http://localhost:3000/api/join/${id}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ class: className }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
+    try {
+      const data = await gameApi.joinGame(id, className);
       myPlayerId.value = data.player_id;
       gameId.value = id;
-      localStorage.setItem('saved_game_id', id);
-      localStorage.setItem('saved_player_id', data.player_id);
       gameState.value = data.state;
-    } else {
-      alert('Could not join game. Check the ID.');
+      localStorage.setItem('saved_game_id', id);
+      localStorage.setItem('saved_player_id', data.player_id.toString());
+    } catch (err) {
+      handleActionError(err);
     }
   }
 
   async function fetchState() {
     if (!gameId.value) return;
     try {
-      const response = await fetch(`http://localhost:3000/api/state/${gameId.value}`);
-      if (response.ok) {
-        gameState.value = await response.json();
-      } else if (response.status === 404) {
-        console.warn('Room not found, clearing session...');
-        leaveGame();
-      }
+      gameState.value = await gameApi.fetchState(gameId.value);
     } catch (err) {
-      console.error('Network error during sync:', err);
+      leaveGame();
     }
   }
 
   async function makeMove(playerId: number, x: number, y: number) {
     if (!gameId.value) return;
-
-    const response = await fetch(`http://localhost:3000/api/move/${gameId.value}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ player_id: playerId, target_x: x, target_y: y }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.warn('Move rejected:', errorText);
-      return;
+    try {
+      gameState.value = await gameApi.makeMove(gameId.value, {
+        player_id: playerId,
+        target_x: x,
+        target_y: y,
+      });
+    } catch (err) {
+      handleActionError(err);
     }
-
-    doneMoving.value = true;
-    gameState.value = await response.json();
   }
 
   async function rollDice() {
     if (isRolling.value || !gameId.value) return;
-
     isRolling.value = true;
     try {
-      const response = await fetch(`http://localhost:3000/api/roll/${gameId.value}`, {
-        method: 'POST',
-      });
-      if (response.ok) {
-        gameState.value = await response.json();
-      }
+      gameState.value = await gameApi.rollDice(gameId.value);
+    } catch (err) {
+      handleActionError(err);
     } finally {
       isRolling.value = false;
+    }
+  }
+
+  async function useCard(targetX: number, targetY: number) {
+    if (!selectedCardId.value || !gameId.value) return;
+    try {
+      gameState.value = await gameApi.useCard(gameId.value, {
+        card_id: selectedCardId.value,
+        attacker_id: myPlayerId.value!,
+        target_pos: [targetX, targetY],
+      });
+      selectedCardId.value = null;
+    } catch (err) {
+      handleActionError(err);
+    }
+  }
+
+  async function drawCard() {
+    if (isDrawing.value || !gameId.value || !myPlayerId.value) return;
+    isDrawing.value = true;
+    try {
+      gameState.value = await gameApi.drawCard(gameId.value, myPlayerId.value);
+    } catch (err) {
+      handleActionError(err);
+    } finally {
+      isDrawing.value = false;
+    }
+  }
+
+  async function endTurn() {
+    if (!gameId.value || !myPlayerId.value) return;
+    try {
+      gameState.value = await gameApi.endTurn(gameId.value, myPlayerId.value);
+    } catch (err) {
+      handleActionError(err);
     }
   }
 
@@ -99,80 +127,12 @@ export const useGameStore = defineStore('game', () => {
     gameId.value = null;
     myPlayerId.value = null;
     gameState.value = null;
-    localStorage.removeItem('saved_game_id');
-    localStorage.removeItem('saved_player_id');
+    localStorage.clear();
     window.location.reload();
   }
 
   function selectCard(cardId: string) {
-    if (selectedCardId.value === cardId) {
-      selectedCardId.value = null;
-    } else {
-      selectedCardId.value = cardId;
-    }
-  }
-
-  async function useCard(targetX: number, targetY: number) {
-    if (!selectedCardId.value) return;
-
-    const response = await fetch(`http://localhost:3000/api/use/${gameId.value}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        card_id: selectedCardId.value,
-        attacker_id: myPlayerId.value,
-        target_pos: [targetX, targetY],
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.warn('Card rejected:', errorText);
-      return;
-    }
-
-    selectedCardId.value = null;
-    donePlaying.value = true;
-    gameState.value = await response.json();
-  }
-
-  async function drawCard() {
-    if (isDrawing.value || !gameId.value) return;
-    isDrawing.value = true;
-
-    console.log(
-      `Sending request to http://localhost:3000/api/draw/${gameId.value}/${myPlayerId.value}`,
-    );
-
-    try {
-      const response = await fetch(
-        `http://localhost:3000/api/draw/${gameId.value}/${myPlayerId.value}`,
-        { method: 'POST' },
-      );
-      if (response.ok) {
-        donePlaying.value = true;
-        gameState.value = await response.json();
-      }
-    } finally {
-      isDrawing.value = false;
-    }
-  }
-
-  async function endTurn() {
-    const response = await fetch(
-      `http://localhost:3000/api/end_turn/${gameId.value}/${myPlayerId.value}`,
-      { method: 'POST' },
-    );
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.warn('Could not end turn:', errorText);
-      return;
-    }
-
-    doneMoving.value = false;
-    donePlaying.value = false;
-    gameState.value = await response.json();
+    selectedCardId.value = selectedCardId.value === cardId ? null : cardId;
   }
 
   return {
@@ -181,9 +141,8 @@ export const useGameStore = defineStore('game', () => {
     myPlayerId,
     isRolling,
     isDrawing,
-    doneMoving,
-    donePlaying,
     selectedCardId,
+    lastError,
     createGame,
     joinGame,
     fetchState,

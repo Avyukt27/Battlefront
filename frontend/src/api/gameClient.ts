@@ -1,8 +1,43 @@
 const BASE_URL = 'http://localhost:3000/api';
 
 export const gameApi = {
+  async createGame() {
+    const res = await fetch(`${BASE_URL}/create`, { method: 'POST' });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async joinGame(id: string, className: string) {
+    const res = await fetch(`${BASE_URL}/join/${id}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ class: className }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
   async fetchState(gameId: string) {
     const res = await fetch(`${BASE_URL}/state/${gameId}`);
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async makeMove(
+    gameId: string,
+    payload: { player_id: number; target_x: number; target_y: number },
+  ) {
+    const res = await fetch(`${BASE_URL}/move/${gameId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async rollDice(gameId: string) {
+    const res = await fetch(`${BASE_URL}/roll/${gameId}`, { method: 'POST' });
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   },
@@ -20,5 +55,15 @@ export const gameApi = {
     return res.json();
   },
 
-  // ... add move, roll, draw, etc.
+  async drawCard(gameId: string, playerId: number) {
+    const res = await fetch(`${BASE_URL}/draw/${gameId}/${playerId}`, { method: 'POST' });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async endTurn(gameId: string, playerId: number) {
+    const res = await fetch(`${BASE_URL}/end_turn/${gameId}/${playerId}`, { method: 'POST' });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
 };
