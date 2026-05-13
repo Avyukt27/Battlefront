@@ -13,7 +13,7 @@ use crate::{
     ServerState,
     game::GameState,
     models::PlayerColour,
-    requests::{MoveRequest, UseCardRequest},
+    requests::{MoveRequest, PlayerRequest, UseCardRequest},
 };
 
 pub fn create_routes(state: Arc<ServerState>) -> Router {
@@ -22,13 +22,11 @@ pub fn create_routes(state: Arc<ServerState>) -> Router {
         .route("/api/roll/{game_id}", post(roll_dice_handler))
         .route("/api/move/{game_id}", post(move_player_handler))
         .route("/api/join/{game_id}", post(join_game_handler))
+        .route("/api/leave/{game_id}", post(leave_game_handler))
         .route("/api/create", post(create_game_handler))
-        .route("/api/draw/{game_id}/{player_id}", post(draw_card_handler))
+        .route("/api/draw/{game_id}", post(draw_card_handler))
         .route("/api/use/{game_id}", post(use_card_handler))
-        .route(
-            "/api/end_turn/{game_id}/{player_id}",
-            post(end_turn_handler),
-        )
+        .route("/api/end_turn/{game_id}", post(end_turn_handler))
         .layer(CorsLayer::permissive())
         .with_state(state)
 }
@@ -114,6 +112,41 @@ pub async fn join_game_handler(
     }
 }
 
+pub async fn leave_game_handler(
+    Path(game_id): Path<String>,
+    State(state): State<Arc<ServerState>>,
+    Json(payload): Json<PlayerRequest>,
+) -> Result<Json<Option<GameState>>, (StatusCode, String)> {
+    let mut games = state.games.lock().unwrap();
+    let mut game = games
+        .get(&game_id)
+        .ok_or((StatusCode::NOT_FOUND, "Game not found".to_string()))?
+        .lock()
+        .unwrap();
+
+    let player_colour = game
+        .players
+        .iter()
+        .find(|p| p.id == payload.player_id)
+        .map(|p| p.colour.clone());
+
+    if let Some(colour) = player_colour
+        && colour == game.current_turn
+    {
+        game.next_turn();
+    }
+
+    game.players.retain(|p| p.id != payload.player_id);
+
+    if game.players.is_empty() {
+        drop(game);
+        games.remove(&game_id);
+        return Ok(Json(None));
+    }
+
+    Ok(Json(Some(game.clone())))
+}
+
 pub async fn create_game_handler(State(state): State<Arc<ServerState>>) -> Json<Value> {
     let mut games = state.games.lock().unwrap();
     let game_id = format!("{:x}", rand::random::<u16>());
@@ -124,8 +157,9 @@ pub async fn create_game_handler(State(state): State<Arc<ServerState>>) -> Json<
 }
 
 pub async fn draw_card_handler(
-    Path((game_id, player_id)): Path<(String, u32)>,
+    Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
+    Json(payload): Json<PlayerRequest>,
 ) -> Result<Json<GameState>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let mut game = games
@@ -137,17 +171,17 @@ pub async fn draw_card_handler(
     let can_draw = game
         .players
         .iter()
-        .find(|p| p.id == player_id)
+        .find(|p| p.id == payload.player_id)
         .map(|p| p.cards.len() < 3)
         .unwrap_or(false);
 
     if !can_draw {
-        return Err((StatusCode::BAD_REQUEST, "Canno draw cards!".to_string()));
+        return Err((StatusCode::BAD_REQUEST, "Cannot draw cards!".to_string()));
     }
 
     if let Some(mut new_card) = game.deck.pop() {
         new_card.id = uuid::Uuid::new_v4().to_string();
-        if let Some(player) = game.players.iter_mut().find(|p| p.id == player_id) {
+        if let Some(player) = game.players.iter_mut().find(|p| p.id == payload.player_id) {
             player.cards.push(new_card);
         }
     }
@@ -186,8 +220,9 @@ pub async fn use_card_handler(
 }
 
 pub async fn end_turn_handler(
-    Path((game_id, player_id)): Path<(String, u32)>,
+    Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
+    Json(payload): Json<PlayerRequest>,
 ) -> Result<Json<GameState>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let mut game = games
@@ -198,7 +233,7 @@ pub async fn end_turn_handler(
     let player_colour = game
         .players
         .iter()
-        .find(|p| p.id == player_id)
+        .find(|p| p.id == payload.player_id)
         .ok_or((StatusCode::NOT_FOUND, "Player not found".to_string()))?
         .colour
         .clone();

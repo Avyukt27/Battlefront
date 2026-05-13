@@ -43,9 +43,9 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  async function joinGame(id: string, className: string) {
+  async function joinGame(id: string) {
     try {
-      const data = await gameApi.joinGame(id, className);
+      const data = await gameApi.joinGame(id);
       myPlayerId.value = data.player_id;
       gameId.value = id;
       gameState.value = data.state;
@@ -115,7 +115,7 @@ export const useGameStore = defineStore('game', () => {
     if (isDrawing.value || !gameId.value || !myPlayerId.value) return;
     isDrawing.value = true;
     try {
-      gameState.value = await gameApi.drawCard(gameId.value, myPlayerId.value);
+      gameState.value = await gameApi.drawCard(gameId.value, { player_id: myPlayerId.value });
       donePlaying.value = true;
     } catch (err) {
       handleActionError(err);
@@ -127,7 +127,7 @@ export const useGameStore = defineStore('game', () => {
   async function endTurn() {
     if (!gameId.value || !myPlayerId.value) return;
     try {
-      gameState.value = await gameApi.endTurn(gameId.value, myPlayerId.value);
+      gameState.value = await gameApi.endTurn(gameId.value, { player_id: myPlayerId.value });
       doneMoving.value = false;
       donePlaying.value = false;
     } catch (err) {
@@ -135,12 +135,23 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  function leaveGame() {
+  async function leaveGame() {
+    if (gameId.value && myPlayerId.value) {
+      try {
+        await gameApi.leaveGame(gameId.value, {
+          player_id: myPlayerId.value,
+        });
+      } catch (err) {
+        console.error('Failed to notify server of departure:', err);
+      }
+    }
+
     gameId.value = null;
     myPlayerId.value = null;
     gameState.value = null;
-    localStorage.clear();
-    window.location.reload();
+
+    localStorage.removeItem('gameId');
+    localStorage.removeItem('myPlayerId');
   }
 
   function selectCard(cardId: string) {

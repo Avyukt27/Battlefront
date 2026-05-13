@@ -7,12 +7,8 @@ export const gameApi = {
     return res.json();
   },
 
-  async joinGame(id: string, className: string) {
-    const res = await fetch(`${BASE_URL}/join/${id}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ class: className }),
-    });
+  async joinGame(gameId: string) {
+    const res = await fetch(`${BASE_URL}/join/${gameId}`, { method: 'POST' });
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   },
@@ -55,14 +51,32 @@ export const gameApi = {
     return res.json();
   },
 
-  async drawCard(gameId: string, playerId: number) {
-    const res = await fetch(`${BASE_URL}/draw/${gameId}/${playerId}`, { method: 'POST' });
+  async drawCard(gameId: string, payload: { player_id: number }) {
+    const res = await fetch(`${BASE_URL}/draw/${gameId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   },
 
-  async endTurn(gameId: string, playerId: number) {
-    const res = await fetch(`${BASE_URL}/end_turn/${gameId}/${playerId}`, { method: 'POST' });
+  async endTurn(gameId: string, payload: { player_id: number }) {
+    const res = await fetch(`${BASE_URL}/end_turn/${gameId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) throw new Error(await res.text());
+    return res.json();
+  },
+
+  async leaveGame(gameId: string, payload: { player_id: number }) {
+    const res = await fetch(`${BASE_URL}/leave/${gameId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   },
