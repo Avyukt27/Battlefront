@@ -109,7 +109,19 @@ impl GameState {
         }
     }
 
-    pub fn add_player(&mut self, id: u32, colour: PlayerColour) -> Result<Player, String> {
+    pub fn add_player(&mut self) -> Result<Player, String> {
+        let all_colours = vec![
+            PlayerColour::Red,
+            PlayerColour::Blue,
+            PlayerColour::Green,
+            PlayerColour::Yellow,
+        ];
+
+        let colour = all_colours
+            .into_iter()
+            .find(|c| !self.players.iter().any(|p| p.colour == *c))
+            .ok_or("Lobby is full".to_string())?;
+
         let (start_x, start_y) = match colour {
             PlayerColour::Red => (0, 0),
             PlayerColour::Blue => (self.width - 1, self.height - 1),
@@ -117,13 +129,7 @@ impl GameState {
             PlayerColour::Yellow => (self.width - 1, 0),
         };
 
-        let mut cards: Vec<Card> = Vec::new();
-        for _ in 0..3 {
-            if let Some(mut card) = self.deck.pop() {
-                card.id = uuid::Uuid::new_v4().to_string();
-                cards.push(card);
-            }
-        }
+        let new_id = self.players.iter().map(|p| p.id).max().unwrap_or(0) + 1;
 
         let classes = vec!["Gunslinger", "Mage", "Knight", "Assassin", "Arsenist"];
         let taken_classes: Vec<String> = self.players.iter().map(|p| p.class.clone()).collect();
@@ -131,13 +137,24 @@ impl GameState {
             .iter()
             .filter(|class| !taken_classes.contains(&class.to_string()))
             .collect();
+
         if available_classes.is_empty() {
-            return Err("No classses available".to_string());
+            return Err("No classes available".to_string());
         }
-        let index = rand::random_range(0..available_classes.len());
-        let class = available_classes[index].to_string();
+
+        let class_index = rand::random_range(0..available_classes.len());
+        let class = available_classes[class_index].to_string();
+
+        let mut cards = Vec::new();
+        for _ in 0..3 {
+            if let Some(mut card) = self.deck.pop() {
+                card.id = uuid::Uuid::new_v4().to_string();
+                cards.push(card);
+            }
+        }
+
         let player = Player {
-            id,
+            id: new_id,
             colour,
             x: start_x,
             y: start_y,

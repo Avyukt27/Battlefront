@@ -89,26 +89,9 @@ pub async fn join_game_handler(
         .lock()
         .unwrap();
 
-    let new_id = (game.players.len() as u32) + 1;
-
-    let player_count = game.players.len();
-    let player_colour = match player_count {
-        0 => Some(PlayerColour::Red),
-        1 => Some(PlayerColour::Blue),
-        2 => Some(PlayerColour::Green),
-        3 => Some(PlayerColour::Yellow),
-        _ => None,
-    };
-    if let Some(colour) = player_colour {
-        match game.add_player(new_id, colour) {
-            Ok(_) => Ok(Json(json!({"player_id": new_id, "state": *game}))),
-            Err(_) => Err((
-                StatusCode::NOT_ACCEPTABLE,
-                "No classes available".to_string(),
-            )),
-        }
-    } else {
-        Err((StatusCode::TOO_MANY_REQUESTS, "Lobby full".to_string()))
+    match game.add_player() {
+        Ok(new_player) => Ok(Json(json![{"player_id": new_player.id, "state": *game}])),
+        Err(e) => Err((StatusCode::NOT_ACCEPTABLE, e)),
     }
 }
 
