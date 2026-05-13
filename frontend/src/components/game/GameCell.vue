@@ -4,12 +4,10 @@ import { useGameStore } from '@/stores/game';
 
 const props = defineProps<{ x: number; y: number }>();
 const store = useGameStore();
-
 const player = computed(() =>
   store.gameState?.players.find((p) => p.x === props.x && p.y === props.y),
 );
 const myPlayer = computed(() => store.gameState?.players.find((p) => p.id === store.myPlayerId));
-
 const isCurrentTurn = computed(() => store.gameState?.current_turn === player.value?.colour);
 
 const isReachable = computed(() => {

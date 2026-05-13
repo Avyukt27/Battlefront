@@ -4,9 +4,10 @@ import { useGameStore } from '@/stores/game';
 import GameBoard from './GameBoard.vue';
 import GameControls from './GameControls.vue';
 import GameCard from './GameCard.vue';
+import PlayerPanel from './PlayerPanel.vue';
 
 const store = useGameStore();
-const showReveal = ref(true);
+const showReveal = ref(store.myPlayerId ? false : true);
 
 const myPlayer = computed(() => store.gameState?.players.find((p) => p.id === store.myPlayerId));
 
@@ -29,12 +30,15 @@ onMounted(() => {
       </div>
 
       <div class="flex flex-row gap-4 items-stretch max-h-[60%]">
+        <div class="border-r border-slate-800 pr-6 flex items-center">
+          <PlayerPanel />
+        </div>
         <div class="shrink shadow-2xl rounded-xl overflow-hidden border border-slate-800">
           <GameBoard />
         </div>
-        <aside class="border-l border-slate-800 pl-6 flex items-center">
+        <div class="border-l border-slate-800 pl-6 flex items-center w-70.25">
           <GameControls />
-        </aside>
+        </div>
       </div>
 
       <div
