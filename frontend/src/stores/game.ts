@@ -13,6 +13,7 @@ export const useGameStore = defineStore('game', () => {
   const isRolling = ref(false);
   const isDrawing = ref(false);
   const selectedCardId = ref<string | null>(null);
+  const doneMoving = ref(false);
 
   async function createGame() {
     const response = await fetch('http://localhost:3000/api/create', {
@@ -73,6 +74,7 @@ export const useGameStore = defineStore('game', () => {
       return;
     }
 
+    doneMoving.value = true;
     gameState.value = await response.json();
   }
 
@@ -165,6 +167,7 @@ export const useGameStore = defineStore('game', () => {
       return;
     }
 
+    doneMoving.value = false;
     gameState.value = await response.json();
   }
 
@@ -174,6 +177,7 @@ export const useGameStore = defineStore('game', () => {
     myPlayerId,
     isRolling,
     isDrawing,
+    doneMoving,
     selectedCardId,
     createGame,
     joinGame,
