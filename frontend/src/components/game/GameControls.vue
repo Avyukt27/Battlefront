@@ -27,7 +27,7 @@ const handleDraw = async () => {
     </button>
     <button
       class="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-md shadow-lg shadow-indigo-500/20 transition-transform active:scale-95"
-      @click="store.rollDice" :disabled="store.isRolling || roll !== 0 || !isMyTurn">
+      @click="store.rollDice" :disabled="store.isRolling || roll !== 0 || !isMyTurn || store.doneMoving">
       <span v-if="store.isRolling && roll === 0">Rolling...</span>
       <span v-else-if="roll !== 0">Waiting for {{ store.gameState?.current_turn }}</span>
       <span v-else>Roll Dice</span>
