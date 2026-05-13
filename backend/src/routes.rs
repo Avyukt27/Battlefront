@@ -141,8 +141,6 @@ pub async fn draw_card_handler(
 
     if let Some(mut new_card) = game.deck.pop() {
         new_card.id = uuid::Uuid::new_v4().to_string();
-        let card_name = new_card.name.clone();
-
         if let Some(player) = game.players.iter_mut().find(|p| p.id == player_id) {
             player.cards.push(new_card);
         }

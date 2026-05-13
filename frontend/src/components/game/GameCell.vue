@@ -58,7 +58,7 @@ const handleMove = () => {
 <template>
   <div
     @click="handleMove"
-    class="relative w-12 h-12 sm:w-16 sm:h-16 bg-slate-800/40 border border-slate-700/10 hover:bg-slate-700/60 transition-all cursor-pointer flex items-center justify-center overflow-hidden"
+    class="relative w-10 h-10 sm:w-14 sm:h-14 bg-slate-800/40 border border-slate-700/10 hover:bg-slate-700/60 transition-all cursor-pointer flex items-center justify-center overflow-hidden"
     :class="[
       isTargetable
         ? 'bg-red-500/20 hover:bg-red-500/40 border-red-500/50 shadow-[0_0_15px_rgba(239, 68, 68, 0)]'

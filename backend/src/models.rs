@@ -23,10 +23,10 @@ pub struct Card {
 }
 
 impl Card {
-    pub fn create_rock() -> Self {
+    pub fn create_stone() -> Self {
         Self {
             id: "".to_string(),
-            name: "Rock".to_string(),
+            name: "Stone".to_string(),
             effects: vec![
                 CardEffect::SkillCheck {
                     threshold: 5,

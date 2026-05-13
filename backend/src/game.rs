@@ -254,7 +254,7 @@ impl GameState {
         let mut new_deck: Vec<Card> = Vec::new();
 
         for _ in 0..4 {
-            new_deck.push(Card::create_rock());
+            new_deck.push(Card::create_stone());
         }
         for _ in 0..5 {
             new_deck.push(Card::create_stick());

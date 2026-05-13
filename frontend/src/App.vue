@@ -28,8 +28,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-950 text-slate-100 font-sans">
-    <div class="p-8">
+  <div class="h-screen bg-slate-950 text-slate-100 font-sans flex flex-col overflow-hidden">
+    <div class="pt-8 pb-1 shrink-0">
       <h1 class="text-4xl font-bold mb-4 text-center">Battlefront</h1>
     </div>
 
@@ -44,39 +44,41 @@ onUnmounted(() => {
 
     <section v-else class="flex flex-col items-center gap-6"></section>
 
-    <section v-if="store.gameState" class="flex flex-col items-center gap-6">
-      <div class="text-center">
+    <section
+      v-if="store.gameState"
+      class="flex flex-col items-center gap-4 flex-1 px-4 overflow-hidden"
+    >
+      <div class="text-center shrink-0">
         <p class="text-slate-500 text-xs uppercase tracking-widest">Room</p>
         <p class="text-xl font-mono text-indigo-400">{{ store.gameId }}</p>
       </div>
 
-      <div class="flex flex-col lg:flex-row gap-8 items-start justify-center">
-        <div class="shrink-0 shadow-2xl rounded-xl overflow-hidden border border-slate-800">
+      <div class="flex flex-row gap-4 items-stretch max-h-[60%]">
+        <div class="shrink shadow-2xl rounded-xl overflow-hidden border border-slate-800">
           <GameBoard />
         </div>
 
-        <aside class="flex flex-col gap-6">
-          <div
-            class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm min-w-28 min-h-127"
-          >
-            <h2 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
-              <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
-              Your Hand
-            </h2>
-
-            <div class="flex flex-col gap-4 items-center">
-              <GameCard
-                v-for="card in myPlayer?.cards"
-                :key="card.id"
-                :id="card.id"
-                :name="card.name"
-              />
-            </div>
-          </div>
+        <aside class="border-l border-slate-800 pl-6 flex items-center">
+          <GameControls />
         </aside>
       </div>
-      <div class="border-t border-slate-800 pt-6 min-w-full">
-        <GameControls />
+
+      <div
+        class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm w-full max-w-4xl shrink-0"
+      >
+        <h2 class="text-white font-bold text-sm mb-2 flex items-center gap-2">
+          <span class="w-2 h-2 bg-indigo-500 rounded-full"></span>
+          Your Hand
+        </h2>
+
+        <div class="flex flex-row gap-4 items-center justify-center">
+          <GameCard
+            v-for="card in myPlayer?.cards"
+            :key="card.id"
+            :id="card.id"
+            :name="card.name"
+          />
+        </div>
       </div>
     </section>
   </div>

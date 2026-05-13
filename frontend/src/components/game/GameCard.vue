@@ -12,16 +12,17 @@ const parallax = reactive(useParallax(target));
 const isSelected = computed(() => store.selectedCardId === props.id);
 
 const containerStyle: CSSProperties = {
-  perspective: '600px',
+  perspective: '1000px',
 };
 
 const cardBase = computed(() => ({
   background: '#fff',
-  width: '7rem',
-  height: '9rem',
-  borderRadius: '5px',
+  width: '180px',
+  height: '270px',
+  borderRadius: '12px',
   border: '1px solid #cdcdcd',
-  overflow: 'hidden',
+  backfaceVisibility: 'hidden' as const,
+  transformStyle: 'preserve-3d' as const,
   transition: '.3s ease-out all',
   boxShadow: '0 0 20px 0 rgba(255, 255, 255, 0.25)',
 }));
@@ -37,10 +38,7 @@ const cardActive = computed(() => ({
   <div ref="card" class="ease-outduration<300> transition-all">
     <div :style="containerStyle">
       <div :style="[isSelected ? cardActive : cardBase]" @click="store.selectCard(props.id)">
-        <img
-          src="https://jaromvogel.com/images/design/jumping_rabbit/page2layer0.png"
-          :alt="name"
-        />
+        <img :src="`/cards/Staff.png`" :alt="name" />
       </div>
     </div>
   </div>
