@@ -14,6 +14,7 @@ export const useGameStore = defineStore('game', () => {
   const isDrawing = ref(false);
   const selectedCardId = ref<string | null>(null);
   const doneMoving = ref(false);
+  const donePlaying = ref(false);
 
   async function createGame() {
     const response = await fetch('http://localhost:3000/api/create', {
@@ -131,6 +132,7 @@ export const useGameStore = defineStore('game', () => {
     }
 
     selectedCardId.value = null;
+    donePlaying.value = true;
     gameState.value = await response.json();
   }
 
@@ -148,6 +150,7 @@ export const useGameStore = defineStore('game', () => {
         { method: 'POST' },
       );
       if (response.ok) {
+        donePlaying.value = true;
         gameState.value = await response.json();
       }
     } finally {
@@ -168,6 +171,7 @@ export const useGameStore = defineStore('game', () => {
     }
 
     doneMoving.value = false;
+    donePlaying.value = false;
     gameState.value = await response.json();
   }
 
@@ -178,6 +182,7 @@ export const useGameStore = defineStore('game', () => {
     isRolling,
     isDrawing,
     doneMoving,
+    donePlaying,
     selectedCardId,
     createGame,
     joinGame,

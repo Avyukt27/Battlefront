@@ -40,7 +40,10 @@ impl Card {
         Self {
             id: "".to_string(),
             name: "Stick".to_string(),
-            effects: vec![CardEffect::Damage { power: 1 }],
+            effects: vec![
+                CardEffect::Damage { power: 1 },
+                CardEffect::Range { max_range: 1 },
+            ],
         }
     }
 
@@ -53,6 +56,7 @@ impl Card {
                 CardEffect::CureStatus {
                     status: Status::Bleed,
                 },
+                CardEffect::Range { max_range: 0 },
             ],
         }
     }

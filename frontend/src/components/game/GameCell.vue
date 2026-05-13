@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed } from 'vue';
 import { useGameStore } from '@/stores/game';
 
 const props = defineProps<{ x: number; y: number }>();
@@ -36,15 +36,11 @@ const isTargetable = computed(() => {
     const startY = myPlayer.value.y;
     const dist = Math.abs(startX - props.x) + Math.abs(startY - props.y);
 
-    if (dist === 0) return false;
+    if (dist === 0 && range !== 0) return false;
     return dist <= range;
   }
 
   return false;
-});
-
-watch(isTargetable, (newVal: boolean) => {
-  if (newVal) console.log(`Targetable Cell Found at X: ${props.x}, Y: ${props.y}`);
 });
 
 const handleMove = () => {

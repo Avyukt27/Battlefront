@@ -9,6 +9,7 @@ const store = useGameStore();
 const target = useTemplateRef('card');
 const parallax = reactive(useParallax(target));
 
+const myPlayer = computed(() => store.gameState?.players.find((p) => p.id === store.myPlayerId));
 const isSelected = computed(() => store.selectedCardId === props.id);
 
 const containerStyle: CSSProperties = {
@@ -32,12 +33,19 @@ const cardActive = computed(() => ({
   transform: `rotateX(${parallax.roll * 10}deg) rotateY(${parallax.tilt * 20}deg)`,
   border: '2px solid rgba(49, 65, 88, 0.6)',
 }));
+
+const handleSelect = () => {
+  if (!store.doneMoving || !myPlayer.value || !store.gameState || store.donePlaying) return;
+  if (!(myPlayer.value.colour === store.gameState.current_turn)) return;
+
+  store.selectCard(props.id);
+};
 </script>
 
 <template>
   <div ref="card" class="ease-outduration<300> transition-all">
     <div :style="containerStyle">
-      <div :style="[isSelected ? cardActive : cardBase]" @click="store.selectCard(props.id)">
+      <div :style="[isSelected ? cardActive : cardBase]" @click="handleSelect">
         <img :src="`/cards/${name}.png`" :alt="name" />
       </div>
     </div>
