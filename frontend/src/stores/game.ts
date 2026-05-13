@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import type { GameState } from './models';
+import type { GameState } from '@/api/models';
 import { gameApi } from '@/api/gameClient';
 
 export const useGameStore = defineStore('game', () => {
@@ -14,6 +14,8 @@ export const useGameStore = defineStore('game', () => {
 
   const isRolling = ref(false);
   const isDrawing = ref(false);
+  const doneMoving = ref(false);
+  const donePlaying = ref(false);
   const selectedCardId = ref<string | null>(null);
   const lastError = ref<string | null>(null);
 
@@ -71,6 +73,7 @@ export const useGameStore = defineStore('game', () => {
         target_x: x,
         target_y: y,
       });
+      doneMoving.value = true;
     } catch (err) {
       handleActionError(err);
     }
@@ -97,6 +100,7 @@ export const useGameStore = defineStore('game', () => {
         target_pos: [targetX, targetY],
       });
       selectedCardId.value = null;
+      donePlaying.value = true;
     } catch (err) {
       handleActionError(err);
     }
@@ -107,6 +111,7 @@ export const useGameStore = defineStore('game', () => {
     isDrawing.value = true;
     try {
       gameState.value = await gameApi.drawCard(gameId.value, myPlayerId.value);
+      donePlaying.value = true;
     } catch (err) {
       handleActionError(err);
     } finally {
@@ -118,6 +123,8 @@ export const useGameStore = defineStore('game', () => {
     if (!gameId.value || !myPlayerId.value) return;
     try {
       gameState.value = await gameApi.endTurn(gameId.value, myPlayerId.value);
+      doneMoving.value = false;
+      donePlaying.value = false;
     } catch (err) {
       handleActionError(err);
     }
@@ -141,6 +148,8 @@ export const useGameStore = defineStore('game', () => {
     myPlayerId,
     isRolling,
     isDrawing,
+    doneMoving,
+    donePlaying,
     selectedCardId,
     lastError,
     createGame,

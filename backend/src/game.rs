@@ -163,38 +163,60 @@ impl GameState {
         attacker_id: u32,
         target_pos: (u8, u8),
     ) -> Result<(), String> {
-        let mut card_to_use: Option<Card> = None;
-        let mut attacker_pos = (0u8, 0u8);
+        let (attacker_pos, card_effects, card_name) = {
+            let attacker = self
+                .players
+                .iter()
+                .find(|p| p.id == attacker_id)
+                .ok_or("Player not found")?;
 
-        if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
-            attacker_pos = (attacker.x, attacker.y);
-            if let Some(idx) = attacker.cards.iter().position(|c| c.id == card_id) {
-                card_to_use = Some(attacker.cards.remove(idx));
-            }
-        }
+            let card = attacker
+                .cards
+                .iter()
+                .find(|c| c.id == card_id)
+                .ok_or("Card not found in hand")?;
 
-        let card = card_to_use.ok_or("Card not found")?;
+            (
+                (attacker.x, attacker.y),
+                card.effects.clone(),
+                card.name.clone(),
+            )
+        };
 
         let distance = (attacker_pos.0 as i16 - target_pos.0 as i16).abs()
             + (attacker_pos.1 as i16 - target_pos.1 as i16).abs();
 
-        for effect in &card.effects {
+        for effect in &card_effects {
             if let CardEffect::Range { max_range } = effect {
                 if distance > *max_range as i16 {
                     return Err("Out of range!".to_string());
                 }
             }
+        }
+
+        if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
+            if let Some(idx) = attacker.cards.iter().position(|c| c.id == card_id) {
+                attacker.cards.remove(idx);
+            }
+        }
+
+        let mut hit_landed = true;
+        for effect in &card_effects {
             if let CardEffect::SkillCheck { threshold } = effect {
                 if distance > 1 {
                     let roll = rand::random_range(1..=6) as u8;
                     if roll < *threshold {
-                        return Err("Missed attack!".to_string());
+                        hit_landed = false;
                     }
                 }
             }
         }
 
-        let radius = if card.name == "Poison Bomb" {
+        if !hit_landed {
+            return Ok(());
+        }
+
+        let radius = if card_name == "Poison Bomb" {
             1i16
         } else {
             0i16
@@ -206,7 +228,7 @@ impl GameState {
             let dist_to_impact = dx.max(dy);
 
             if dist_to_impact <= radius {
-                for effect in &card.effects {
+                for effect in &card_effects {
                     match effect {
                         CardEffect::Damage { power } => {
                             player.health = player.health.saturating_sub(*power);
@@ -231,7 +253,7 @@ impl GameState {
             }
 
             if player.id == attacker_id {
-                for effect in &card.effects {
+                for effect in &card_effects {
                     match effect {
                         CardEffect::Heal { amount } => {
                             player.health = (player.health + amount).min(player.max_health);

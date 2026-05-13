@@ -35,11 +35,11 @@ pub fn create_routes(state: Arc<ServerState>) -> Router {
 pub async fn roll_dice_handler(
     Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
-) -> Result<Json<GameState>, StatusCode> {
+) -> Result<Json<GameState>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let mut game = games
         .get(&game_id)
-        .ok_or(StatusCode::NOT_FOUND)?
+        .ok_or((StatusCode::NOT_FOUND, "Game not found".to_string()))?
         .lock()
         .unwrap();
 
@@ -51,28 +51,28 @@ pub async fn move_player_handler(
     Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
     Json(payload): Json<MoveRequest>,
-) -> Result<Json<GameState>, StatusCode> {
+) -> Result<Json<GameState>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let mut game = games
         .get(&game_id)
-        .ok_or(StatusCode::NOT_FOUND)?
+        .ok_or((StatusCode::NOT_FOUND, "Game not found".to_string()))?
         .lock()
         .unwrap();
 
     match game.try_move(payload.player_id, payload.target_x, payload.target_y) {
         Ok(_) => Ok(Json(game.clone())),
-        Err(_) => Err(StatusCode::BAD_REQUEST),
+        Err(err) => Err((StatusCode::BAD_REQUEST, err.to_string())),
     }
 }
 
 pub async fn get_state_handler(
     Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
-) -> Result<Json<GameState>, StatusCode> {
+) -> Result<Json<GameState>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let game = games
         .get(&game_id)
-        .ok_or(StatusCode::NOT_FOUND)?
+        .ok_or((StatusCode::NOT_FOUND, "Game not found".to_string()))?
         .lock()
         .unwrap();
 
@@ -83,11 +83,11 @@ pub async fn join_game_handler(
     Path(game_id): Path<String>,
     State(state): State<Arc<ServerState>>,
     Json(payload): Json<JoinRequest>,
-) -> Result<Json<Value>, StatusCode> {
+) -> Result<Json<Value>, (StatusCode, String)> {
     let games = state.games.lock().unwrap();
     let mut game = games
         .get(&game_id)
-        .ok_or(StatusCode::NOT_FOUND)?
+        .ok_or((StatusCode::NOT_FOUND, "Game not found".to_string()))?
         .lock()
         .unwrap();
 
@@ -104,7 +104,7 @@ pub async fn join_game_handler(
         game.add_player(new_id, colour, payload.class);
         Ok(Json(json!({"player_id": new_id, "state": *game})))
     } else {
-        Err(StatusCode::TOO_MANY_REQUESTS)
+        Err((StatusCode::TOO_MANY_REQUESTS, "Lobby full".to_string()))
     }
 }
 
@@ -175,7 +175,7 @@ pub async fn use_card_handler(
 
     match game.use_card(&payload.card_id, payload.attacker_id, payload.target_pos) {
         Ok(_) => Ok(Json(game.clone())),
-        Err(e) => Err((StatusCode::BAD_REQUEST, e)),
+        Err(e) => Err((StatusCode::FORBIDDEN, e)),
     }
 }
 
