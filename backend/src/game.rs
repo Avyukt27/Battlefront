@@ -1,27 +1,7 @@
 use rand::seq::SliceRandom;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
-use crate::models::{ActiveEffect, Card, CardEffect, Status};
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub enum PlayerColour {
-    Red,
-    Blue,
-    Green,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Player {
-    pub id: u32,
-    pub colour: PlayerColour,
-    pub x: u8,
-    pub y: u8,
-    pub health: i32,
-    pub max_health: i32,
-    pub status_effects: Vec<ActiveEffect>,
-    pub class: String,
-    pub cards: Vec<Card>,
-}
+use crate::models::{ActiveEffect, Card, CardEffect, Player, PlayerColour, Status};
 
 #[derive(Debug, Serialize, Clone)]
 pub struct GameState {
@@ -129,15 +109,52 @@ impl GameState {
         }
     }
 
-    pub fn add_player(&mut self, id: u32, colour: PlayerColour, class: String) {
+    pub fn add_player(&mut self) -> Result<Player, String> {
+        let all_colours = vec![
+            PlayerColour::Red,
+            PlayerColour::Blue,
+            PlayerColour::Green,
+            PlayerColour::Yellow,
+        ];
+
+        let colour = all_colours
+            .into_iter()
+            .find(|c| !self.players.iter().any(|p| p.colour == *c))
+            .ok_or("Lobby is full".to_string())?;
+
         let (start_x, start_y) = match colour {
             PlayerColour::Red => (0, 0),
             PlayerColour::Blue => (self.width - 1, self.height - 1),
             PlayerColour::Green => (0, self.height - 1),
+            PlayerColour::Yellow => (self.width - 1, 0),
         };
 
-        self.players.push(Player {
-            id,
+        let new_id = self.players.iter().map(|p| p.id).max().unwrap_or(0) + 1;
+
+        let classes = vec!["Gunslinger", "Mage", "Knight", "Assassin", "Arsenist"];
+        let taken_classes: Vec<String> = self.players.iter().map(|p| p.class.clone()).collect();
+        let available_classes: Vec<&&str> = classes
+            .iter()
+            .filter(|class| !taken_classes.contains(&class.to_string()))
+            .collect();
+
+        if available_classes.is_empty() {
+            return Err("No classes available".to_string());
+        }
+
+        let class_index = rand::random_range(0..available_classes.len());
+        let class = available_classes[class_index].to_string();
+
+        let mut cards = Vec::new();
+        for _ in 0..3 {
+            if let Some(mut card) = self.deck.pop() {
+                card.id = uuid::Uuid::new_v4().to_string();
+                cards.push(card);
+            }
+        }
+
+        let player = Player {
+            id: new_id,
             colour,
             x: start_x,
             y: start_y,
@@ -145,39 +162,60 @@ impl GameState {
             max_health: 20,
             status_effects: Vec::new(),
             class,
-            cards: Vec::new(),
-        });
+            cards,
+        };
+
+        self.players.push(player.clone());
+        Ok(player)
     }
 
-    pub fn use_card(&mut self, card_id: &str, attacker_id: u32, target_pos: (u8, u8)) {
-        let mut card_to_use: Option<Card> = None;
-        let mut attacker_pos = (0u8, 0u8);
+    pub fn use_card(
+        &mut self,
+        card_id: &str,
+        attacker_id: u32,
+        target_pos: (u8, u8),
+    ) -> Result<bool, String> {
+        let (attacker_pos, card_effects, card_name) = {
+            let attacker = self
+                .players
+                .iter()
+                .find(|p| p.id == attacker_id)
+                .ok_or("Player not found")?;
 
-        if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
-            attacker_pos = (attacker.x, attacker.y);
-            if let Some(idx) = attacker.cards.iter().position(|c| c.id == card_id) {
-                card_to_use = Some(attacker.cards.remove(idx));
-            }
-        }
+            let card = attacker
+                .cards
+                .iter()
+                .find(|c| c.id == card_id)
+                .ok_or("Card not found in hand")?;
 
-        let card = match card_to_use {
-            Some(c) => c,
-            None => return,
+            (
+                (attacker.x, attacker.y),
+                card.effects.clone(),
+                card.name.clone(),
+            )
         };
 
         let distance = (attacker_pos.0 as i16 - target_pos.0 as i16).abs()
             + (attacker_pos.1 as i16 - target_pos.1 as i16).abs();
 
-        let mut hit_landed = true;
-        for effect in &card.effects {
-            if let CardEffect::SkillCheck {
-                threshold,
-                max_range,
-            } = effect
-            {
+        for effect in &card_effects {
+            if let CardEffect::Range { max_range } = effect {
                 if distance > *max_range as i16 {
-                    hit_landed = false;
-                } else if distance > 1 {
+                    return Err("Out of range!".to_string());
+                }
+            }
+        }
+
+        if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
+            if let Some(idx) = attacker.cards.iter().position(|c| c.id == card_id) {
+                attacker.cards.remove(idx);
+            }
+        }
+
+        let mut hit_landed = true;
+        for effect in &card_effects {
+            if let CardEffect::SkillCheck { threshold } = effect {
+                if distance > 1 {
                     let roll = rand::random_range(1..=6) as u8;
                     if roll < *threshold {
                         hit_landed = false;
@@ -187,10 +225,10 @@ impl GameState {
         }
 
         if !hit_landed {
-            return;
+            return Ok(false);
         }
 
-        let radius = if card.name == "Poison Bomb" {
+        let radius = if card_name == "Poison Bomb" {
             1i16
         } else {
             0i16
@@ -202,7 +240,7 @@ impl GameState {
             let dist_to_impact = dx.max(dy);
 
             if dist_to_impact <= radius {
-                for effect in &card.effects {
+                for effect in &card_effects {
                     match effect {
                         CardEffect::Damage { power } => {
                             player.health = player.health.saturating_sub(*power);
@@ -227,7 +265,7 @@ impl GameState {
             }
 
             if player.id == attacker_id {
-                for effect in &card.effects {
+                for effect in &card_effects {
                     match effect {
                         CardEffect::Heal { amount } => {
                             player.health = (player.health + amount).min(player.max_health);
@@ -240,15 +278,17 @@ impl GameState {
                 }
             }
         }
+
+        Ok(true)
     }
 
     pub fn initialise_deck(&mut self) {
         let mut new_deck: Vec<Card> = Vec::new();
 
         for _ in 0..4 {
-            new_deck.push(Card::create_rock());
+            new_deck.push(Card::create_stone());
         }
-        for _ in 0..3 {
+        for _ in 0..5 {
             new_deck.push(Card::create_stick());
         }
         for _ in 0..3 {

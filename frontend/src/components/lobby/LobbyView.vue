@@ -4,20 +4,19 @@ import { useGameStore } from '@/stores/game';
 
 const store = useGameStore();
 const joinId = ref('');
-const selectedClass = ref('Knight');
 
 const handleCreate = async () => {
   await store.createGame();
 
   if (store.gameId) {
     console.log(store.gameId);
-    await store.joinGame(store.gameId, selectedClass.value);
+    await store.joinGame(store.gameId);
   }
 };
 
 const handleJoin = async () => {
   if (!joinId.value) return;
-  await store.joinGame(joinId.value.toLowerCase(), selectedClass.value);
+  await store.joinGame(joinId.value.toLowerCase());
 };
 </script>
 

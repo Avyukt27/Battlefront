@@ -6,12 +6,13 @@ export enum Status {
 export type CardEffect =
   | { Damage: { power: number } }
   | { Heal: { amount: number } }
-  | { SkillCheck: { threshold: number; max_range: number } }
+  | { SkillCheck: { threshold: number } }
   | { ApplyStatus: { status: Status; duration: number } }
-  | { CureStatus: { status: Status } };
+  | { CureStatus: { status: Status } }
+  | { Range: { max_range: number } };
 
 export interface Card {
-  id: number;
+  id: string;
   name: string;
   effects: CardEffect[];
 }
@@ -30,6 +31,7 @@ export interface Player {
   max_health: number;
   status_effects: ActiveEffect[];
   class: string;
+  cards: Card[];
 }
 
 export interface GameState {

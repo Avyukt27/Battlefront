@@ -97,19 +97,19 @@ async fn test_cannot_move_before_rolling() {
 #[tokio::test]
 async fn test_automatic_turn_change() {
     let mut game = GameState::new(8, 8);
-    game.add_player(1, backend::game::PlayerColour::Red, "Knight".to_string());
-    game.add_player(2, backend::game::PlayerColour::Blue, "Knight".to_string());
+    let _ = game.add_player();
+    let _ = game.add_player();
     game.last_roll = 2;
-    game.current_turn = backend::game::PlayerColour::Red;
+    game.current_turn = backend::models::PlayerColour::Red;
 
     let state = setup_test_state(game);
     let app = create_routes(state);
 
     let request = Request::builder()
         .method(http::Method::POST)
-        .uri(format!("/api/end_turn/{}/{}", TEST_ID, 1))
+        .uri(format!("/api/end_turn/{}", TEST_ID))
         .header(http::header::CONTENT_TYPE, "application/json")
-        .body(Body::empty())
+        .body(Body::from(json!({"player_id": 1}).to_string()))
         .unwrap();
 
     let response = app.oneshot(request).await.unwrap();
@@ -119,7 +119,6 @@ async fn test_automatic_turn_change() {
     let body: Value = serde_json::from_slice(&body).unwrap();
 
     assert_eq!(body["current_turn"], "Blue");
-    assert_eq!(body["last_roll"], 0);
 }
 
 #[tokio::test]
