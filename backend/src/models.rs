@@ -1,5 +1,26 @@
 use serde::{Deserialize, Serialize};
 
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub enum PlayerColour {
+    Red,
+    Blue,
+    Green,
+    Yellow,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Player {
+    pub id: u32,
+    pub colour: PlayerColour,
+    pub x: u8,
+    pub y: u8,
+    pub health: i32,
+    pub max_health: i32,
+    pub status_effects: Vec<ActiveEffect>,
+    pub class: String,
+    pub cards: Vec<Card>,
+}
+
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
 pub enum Status {
     Bleed,

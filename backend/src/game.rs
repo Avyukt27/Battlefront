@@ -1,27 +1,7 @@
 use rand::seq::SliceRandom;
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 
-use crate::models::{ActiveEffect, Card, CardEffect, Status};
-
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub enum PlayerColour {
-    Red,
-    Blue,
-    Green,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Player {
-    pub id: u32,
-    pub colour: PlayerColour,
-    pub x: u8,
-    pub y: u8,
-    pub health: i32,
-    pub max_health: i32,
-    pub status_effects: Vec<ActiveEffect>,
-    pub class: String,
-    pub cards: Vec<Card>,
-}
+use crate::models::{ActiveEffect, Card, CardEffect, Player, PlayerColour, Status};
 
 #[derive(Debug, Serialize, Clone)]
 pub struct GameState {
@@ -134,6 +114,7 @@ impl GameState {
             PlayerColour::Red => (0, 0),
             PlayerColour::Blue => (self.width - 1, self.height - 1),
             PlayerColour::Green => (0, self.height - 1),
+            PlayerColour::Yellow => (self.width - 1, 0),
         };
 
         let mut cards: Vec<Card> = Vec::new();

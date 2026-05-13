@@ -10,6 +10,14 @@ const player = computed(() =>
 const myPlayer = computed(() => store.gameState?.players.find((p) => p.id === store.myPlayerId));
 const isCurrentTurn = computed(() => store.gameState?.current_turn === player.value?.colour);
 
+const colorMap: Record<string, string> = {
+  Red: 'bg-red-600 border-red-400',
+  Blue: 'bg-blue-600 border-blue-400',
+  Green: 'bg-green-600 border-green-400',
+  Yellow: 'bg-yellow-600 border-yellow-400',
+  Purple: 'bg-purple-600 border-purple-400',
+};
+
 const isReachable = computed(() => {
   const state = store.gameState;
   if (!state || !myPlayer.value || state.last_roll === 0) return false;
@@ -66,11 +74,7 @@ const handleMove = () => {
     }">
     <div v-if="isReachable && !player" class="w-2 h-2 rounded-full bg-indigo-400/40"></div>
     <div v-if="player" class="w-4/5 h-4/5 rounded-full shadow-2xl transition-all duration-500 transform scale-90 z-10"
-      :class="{
-        'bg-red-600 border-2 border-red-400': player.colour === 'Red',
-        'bg-blue-600 border-2 border-blue-400': player.colour === 'Blue',
-        'bg-green-600 border-2 border-green-400': player.colour === 'Green',
-      }">
+      :class="colorMap[player.colour]">
       <div v-if="isCurrentTurn" class="absolute inset-0 rounded-full animate-ping bg-white/30"></div>
     </div>
 

@@ -11,7 +11,8 @@ use tower_http::cors::CorsLayer;
 
 use crate::{
     ServerState,
-    game::{GameState, PlayerColour},
+    game::GameState,
+    models::PlayerColour,
     requests::{MoveRequest, UseCardRequest},
 };
 
@@ -97,6 +98,7 @@ pub async fn join_game_handler(
         0 => Some(PlayerColour::Red),
         1 => Some(PlayerColour::Blue),
         2 => Some(PlayerColour::Green),
+        3 => Some(PlayerColour::Yellow),
         _ => None,
     };
     if let Some(colour) = player_colour {
