@@ -176,16 +176,17 @@ impl GameState {
         let distance = (attacker_pos.0 as i16 - target_pos.0 as i16).abs()
             + (attacker_pos.1 as i16 - target_pos.1 as i16).abs();
 
+        let mut range = 0;
         let mut hit_landed = true;
         for effect in &card.effects {
-            if let CardEffect::SkillCheck {
-                threshold,
-                max_range,
-            } = effect
-            {
-                if distance > *max_range as i16 {
+            if let CardEffect::Range { max_range } = effect {
+                range = *max_range;
+                if distance > range as i16 {
                     hit_landed = false;
-                } else if distance > 1 {
+                }
+            }
+            if let CardEffect::SkillCheck { threshold } = effect {
+                if distance > 1 {
                     let roll = rand::random_range(1..=6) as u8;
                     if roll < *threshold {
                         hit_landed = false;

@@ -10,9 +10,10 @@ pub enum Status {
 pub enum CardEffect {
     Damage { power: i32 },
     Heal { amount: i32 },
-    SkillCheck { threshold: u8, max_range: u8 },
+    SkillCheck { threshold: u8 },
     ApplyStatus { status: Status, duration: u8 },
     CureStatus { status: Status },
+    Range { max_range: u8 },
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -28,11 +29,9 @@ impl Card {
             id: "".to_string(),
             name: "Stone".to_string(),
             effects: vec![
-                CardEffect::SkillCheck {
-                    threshold: 5,
-                    max_range: 4,
-                },
+                CardEffect::SkillCheck { threshold: 5 },
                 CardEffect::Damage { power: 1 },
+                CardEffect::Range { max_range: 4 },
             ],
         }
     }
