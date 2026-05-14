@@ -70,7 +70,7 @@ async fn test_roll() {
     let body = response.into_body().collect().await.unwrap().to_bytes();
     let body: Value = serde_json::from_slice(&body).unwrap();
 
-    let roll = body["last_roll"]
+    let roll = body["lastRoll"]
         .as_u64()
         .expect("last_roll should be a number");
     assert!(roll >= 1 && roll <= 6);
@@ -86,7 +86,7 @@ async fn test_cannot_move_before_rolling() {
         .uri(format!("/api/move/{}", TEST_ID))
         .header(http::header::CONTENT_TYPE, "application/json")
         .body(Body::from(
-            json!({"player_id": 1, "target_x": 1, "target_y": 1}).to_string(),
+            json!({"playerId": 1, "targetX": 1, "targetY": 1}).to_string(),
         ))
         .unwrap();
 
@@ -107,9 +107,9 @@ async fn test_automatic_turn_change() {
 
     let request = Request::builder()
         .method(http::Method::POST)
-        .uri(format!("/api/end_turn/{}", TEST_ID))
+        .uri(format!("/api/end/{}", TEST_ID))
         .header(http::header::CONTENT_TYPE, "application/json")
-        .body(Body::from(json!({"player_id": 1}).to_string()))
+        .body(Body::from(json!({"playerId": 1}).to_string()))
         .unwrap();
 
     let response = app.oneshot(request).await.unwrap();
@@ -118,7 +118,7 @@ async fn test_automatic_turn_change() {
     let body = response.into_body().collect().await.unwrap().to_bytes();
     let body: Value = serde_json::from_slice(&body).unwrap();
 
-    assert_eq!(body["current_turn"], "Blue");
+    assert_eq!(body["currentTurn"], "Blue");
 }
 
 #[tokio::test]
