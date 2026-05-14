@@ -36,7 +36,9 @@ impl GameState {
     pub fn roll_dice(&mut self) -> i16 {
         let modifier = if self.players.iter().any(|p| {
             p.colour == self.current_turn
-                && p.status_effects.iter().any(|e| e.status == Status::Bleed)
+                && p.status_effects
+                    .iter()
+                    .any(|e| e.status == Status::Fracture)
         }) {
             -1i16
         } else {
@@ -44,7 +46,7 @@ impl GameState {
         };
 
         self.last_roll = rand::random_range(1..=6);
-        (self.last_roll + modifier).max(0)
+        (self.last_roll + modifier).max(1)
     }
 
     pub fn try_move(&mut self, player_id: u32, target_x: u8, target_y: u8) -> Result<(), String> {
@@ -179,7 +181,10 @@ impl GameState {
             health: 20,
             max_health: 20,
             shield: 0,
-            status_effects: Vec::new(),
+            status_effects: vec![ActiveEffect {
+                status: Status::Fracture,
+                duration: 1,
+            }],
             class: given_class.clone(),
             cards,
         };

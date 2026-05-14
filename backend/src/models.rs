@@ -20,7 +20,7 @@ pub struct Player {
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
 #[serde(rename_all = "PascalCase")]
 pub enum Status {
-    Bleed,
+    Fracture,
     Poison,
 }
 

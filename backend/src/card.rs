@@ -49,7 +49,7 @@ impl Card {
             effects: vec![
                 CardEffect::Heal { amount: 2 },
                 CardEffect::CureStatus {
-                    status: Status::Bleed,
+                    status: Status::Fracture,
                 },
                 CardEffect::Range { max_range: 0 },
             ],
