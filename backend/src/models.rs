@@ -53,8 +53,9 @@ pub enum PlayerClass {
 impl PlayerClass {
     pub fn get_signature_card(&self) -> Card {
         match self {
-            PlayerClass::Gunslinger => Card::create_revolver(),
-            PlayerClass::Mage => Card::create_staff(),
+            Self::Gunslinger => Card::create_revolver(),
+            Self::Mage => Card::create_staff(),
+            Self::Assassin => Card::create_dagger(),
             _ => Card::create_stick(),
         }
     }

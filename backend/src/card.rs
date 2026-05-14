@@ -109,6 +109,23 @@ impl Card {
             ],
         }
     }
+
+    pub fn create_dagger() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Dagger".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 1 },
+                CardEffect::Ability {
+                    ability: CardAbility::ShieldPierce,
+                    cooldown: 2,
+                },
+            ],
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -128,4 +145,5 @@ pub enum CardEffect {
 #[serde(rename_all = "PascalCase")]
 pub enum CardAbility {
     DamageMul { multiplier: f32, threshold: u8 },
+    ShieldPierce,
 }

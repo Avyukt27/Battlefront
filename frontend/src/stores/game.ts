@@ -12,6 +12,7 @@ export const useGameStore = defineStore('game', () => {
 
   const isRolling = ref(false);
   const isDrawing = ref(false);
+  const isUsingAbility = ref(false);
   const doneMoving = ref(false);
   const donePlaying = ref(false);
   const selectedCardId = ref<string | null>(null);
@@ -89,18 +90,19 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  async function useCard(targetX: number, targetY: number, useAbility: boolean) {
+  async function useCard(targetX: number, targetY: number) {
     if (!selectedCardId.value || !gameId.value) return;
     try {
       const data = await gameApi.useCard(gameId.value, {
         cardId: selectedCardId.value,
         attackerId: myPlayerId.value!,
         targetPos: [targetX, targetY],
-        useAbility,
+        useAbility: isUsingAbility.value,
       });
       gameState.value = data[0];
       selectedCardId.value = null;
       donePlaying.value = true;
+      isUsingAbility.value = false;
 
       if (!data[1]) {
         setError('Missed');
@@ -129,6 +131,7 @@ export const useGameStore = defineStore('game', () => {
       gameState.value = await gameApi.endTurn(gameId.value, { playerId: myPlayerId.value });
       doneMoving.value = false;
       donePlaying.value = false;
+      isUsingAbility.value = false;
     } catch (err) {
       handleActionError(err);
     }
@@ -150,6 +153,7 @@ export const useGameStore = defineStore('game', () => {
     gameState.value = null;
     isRolling.value = false;
     isDrawing.value = false;
+    isUsingAbility.value = false;
     doneMoving.value = false;
     donePlaying.value = false;
 
@@ -167,6 +171,7 @@ export const useGameStore = defineStore('game', () => {
     myPlayerId,
     isRolling,
     isDrawing,
+    isUsingAbility,
     doneMoving,
     donePlaying,
     selectedCardId,

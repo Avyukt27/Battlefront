@@ -69,8 +69,8 @@ impl GameState {
         let dist =
             (current_x as i16 - target_x as i16).abs() + (current_y as i16 - target_y as i16).abs();
 
-        if dist > self.last_roll as i16 {
-            return Err("Destination is too far away!".to_string());
+        if dist > self.last_roll {
+            return Err("Destination is too far!".to_string());
         }
         if self
             .players
@@ -142,9 +142,9 @@ impl GameState {
 
         let classes = vec![
             PlayerClass::Gunslinger,
-            PlayerClass::Mage,
+            // PlayerClass::Mage,
             // PlayerClass::Knight,
-            // PlayerClass::Assassin,
+            PlayerClass::Assassin,
             // PlayerClass::Arsenist,
         ];
         let taken_classes: Vec<PlayerClass> =
@@ -198,6 +198,7 @@ impl GameState {
         use_ability: bool,
     ) -> Result<bool, String> {
         let mut damage_mod = 1.0;
+        let mut shield_bypass = false;
 
         let (attacker_pos, card_cooldown, card_effects, card_name) = {
             let attacker = self
@@ -233,11 +234,14 @@ impl GameState {
                             threshold,
                         } => {
                             let roll = rand::random_range(1..=6) as u8;
-                            if roll >= *threshold {
-                                damage_mod = *multiplier;
+                            damage_mod = if roll >= *threshold {
+                                *multiplier
                             } else {
-                                damage_mod = 1.0 / *multiplier;
-                            }
+                                1.0 / *multiplier
+                            };
+                        }
+                        CardAbility::ShieldPierce => {
+                            shield_bypass = true;
                         }
                     }
                 }
@@ -277,11 +281,8 @@ impl GameState {
         let mut hit_landed = true;
         for effect in &card_effects {
             if let CardEffect::SkillCheck { threshold } = effect {
-                if distance > 1 {
-                    let roll = rand::random_range(1..=6) as u8;
-                    if roll < *threshold {
-                        hit_landed = false;
-                    }
+                if distance > 1 && rand::random_range(1..=6) < *threshold {
+                    hit_landed = false;
                 }
             }
         }
@@ -289,28 +290,31 @@ impl GameState {
             return Ok(false);
         }
 
-        let radius = if card_name == "Poison Bomb" {
-            1i16
-        } else {
-            0i16
-        };
-
         for player in self.players.iter_mut() {
             let dx = (player.x as i16 - target_pos.0 as i16).abs();
             let dy = (player.y as i16 - target_pos.1 as i16).abs();
-            let dist_to_impact = dx.max(dy);
 
-            if dist_to_impact <= radius {
+            let is_in_hit_zone = match card_name.as_str() {
+                "Poison Bomb" => dx.max(dy) <= 1,
+                "Fire Drink" if use_ability => (dx + dy) <= 1,
+                _ => dx == 0 && dy == 0,
+            };
+
+            if is_in_hit_zone {
                 for effect in &card_effects {
                     match effect {
                         CardEffect::Damage { power } => {
-                            let total_damage = (*power as f32 * damage_mod) as i32;
-                            if player.shield >= total_damage {
-                                player.shield -= total_damage;
+                            let final_dmg = (*power as f32 * damage_mod) as i32;
+                            if !shield_bypass {
+                                if player.shield >= final_dmg {
+                                    player.shield -= final_dmg;
+                                } else {
+                                    let overflow = final_dmg - player.shield;
+                                    player.shield = 0;
+                                    player.health = player.health.saturating_sub(overflow);
+                                }
                             } else {
-                                let overflow = total_damage - player.shield;
-                                player.shield = 0;
-                                player.health = player.health.saturating_sub(overflow);
+                                player.health = player.health.saturating_sub(final_dmg);
                             }
                         }
                         CardEffect::ApplyStatus { status, duration } => {
@@ -342,7 +346,7 @@ impl GameState {
                             player.status_effects.retain(|e| e.status != *status);
                         }
                         CardEffect::Shield { value } => {
-                            player.shield = (player.shield + *value).min(5);
+                            player.shield = (player.shield + *value).min(10);
                         }
                         _ => {}
                     }
