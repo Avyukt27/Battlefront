@@ -16,6 +16,7 @@ pub struct GameState {
     pub height: u8,
     pub fire_tiles: Vec<FireTile>,
     pub deck: Vec<Card>,
+    pub last_message: String,
 }
 
 impl GameState {
@@ -28,6 +29,7 @@ impl GameState {
             height,
             fire_tiles: Vec::new(),
             deck: Vec::new(),
+            last_message: "".to_string(),
         }
     }
 
@@ -260,10 +262,11 @@ impl GameState {
                             threshold,
                         } => {
                             let roll = rand::random_range(1..=6) as u8;
-                            damage_mod = if roll >= *threshold {
-                                *multiplier
+                            if roll >= *threshold {
+                                damage_mod = *multiplier;
                             } else {
-                                1.0 / *multiplier
+                                self.last_message = "Failed ability roll".to_string();
+                                damage_mod = 1.0 / *multiplier;
                             };
                         }
                         CardAbility::ShieldPierce => {
@@ -326,6 +329,7 @@ impl GameState {
             }
         }
         if !hit_landed {
+            self.last_message = "Missed".to_string();
             return Ok(false);
         }
 

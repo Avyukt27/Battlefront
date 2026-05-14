@@ -103,9 +103,11 @@ export const useGameStore = defineStore('game', () => {
       selectedCardId.value = null;
       donePlaying.value = true;
       isUsingAbility.value = false;
-
       if (!data[1]) {
         setError('Missed');
+      }
+      if (data[0].lastMessage === 'Failed ability roll') {
+        setError('Failed ability roll');
       }
     } catch (err) {
       handleActionError(err);

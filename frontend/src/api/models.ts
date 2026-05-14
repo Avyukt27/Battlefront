@@ -64,4 +64,5 @@ export interface GameState {
   width: number;
   height: number;
   fireTiles: FireTile[];
+  lastMessage: string;
 }
