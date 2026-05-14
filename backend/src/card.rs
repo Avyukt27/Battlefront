@@ -85,6 +85,7 @@ impl Card {
                     },
                     cooldown: 3,
                 },
+                CardEffect::SkillCheck { threshold: 4 },
             ],
         }
     }

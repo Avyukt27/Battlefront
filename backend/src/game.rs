@@ -181,10 +181,7 @@ impl GameState {
             health: 20,
             max_health: 20,
             shield: 0,
-            status_effects: vec![ActiveEffect {
-                status: Status::Fracture,
-                duration: 1,
-            }],
+            status_effects: Vec::new(),
             class: given_class.clone(),
             cards,
         };

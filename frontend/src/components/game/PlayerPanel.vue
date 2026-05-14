@@ -29,9 +29,14 @@ const store = useGameStore();
         <span class="text-xs font-mono">{{ player.health }} / {{ player.maxHealth }}</span>
         <span class="text-xs font-mono">Shield: {{ player.shield }}</span>
       </div>
-      <ul v-if="player.statusEffects.length > 0">
-        <li v-for="effect in player.statusEffects" :key="effect.status"></li>
-      </ul>
+      <div v-if="player.statusEffects.length > 0">
+        <p class="text-[16px] text-slate-400 mt-1 font-bold">Effects</p>
+        <ul class="list-disc">
+          <li v-for="effect in player.statusEffects" :key="effect.status" class="text-[12px] ml-4">
+            {{ effect.status }}
+          </li>
+        </ul>
+      </div>
     </div>
   </aside>
 </template>

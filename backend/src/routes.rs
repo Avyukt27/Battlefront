@@ -154,7 +154,10 @@ pub async fn draw_card_handler(
         .players
         .iter()
         .find(|p| p.id == payload.player_id)
-        .map(|p| p.cards.len() < 3)
+        .map(|p| {
+            let inventory_count = p.cards.iter().filter(|c| !c.is_signature).count();
+            inventory_count < 3
+        })
         .unwrap_or(false);
 
     if !can_draw {
