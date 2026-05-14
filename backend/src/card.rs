@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::{CardEffect, Status};
+use crate::models::Status;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Card {
@@ -67,4 +67,41 @@ impl Card {
             ],
         }
     }
+
+    pub fn create_revolver() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Revolver".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 4 },
+                CardEffect::Ability {
+                    ability: CardAbility::DamageMul {
+                        multiplier: 3.0,
+                        threshold: 0,
+                    },
+                    cooldown: 3,
+                },
+            ],
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum CardEffect {
+    Damage { power: i32 },
+    Heal { amount: i32 },
+    SkillCheck { threshold: u8 },
+    ApplyStatus { status: Status, duration: u8 },
+    CureStatus { status: Status },
+    Range { max_range: u8 },
+    Shield { value: i32 },
+    Ability { ability: CardAbility, cooldown: u8 },
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub enum CardAbility {
+    DamageMul { multiplier: f32, threshold: u8 },
 }

@@ -2,14 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::card::Card;
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub enum PlayerColour {
-    Red,
-    Blue,
-    Green,
-    Yellow,
-}
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Player {
     pub id: u32,
@@ -20,7 +12,7 @@ pub struct Player {
     pub max_health: i32,
     pub shield: i32,
     pub status_effects: Vec<ActiveEffect>,
-    pub class: String,
+    pub class: PlayerClass,
     pub cards: Vec<Card>,
 }
 
@@ -31,19 +23,33 @@ pub enum Status {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub enum CardEffect {
-    Damage { power: i32 },
-    Heal { amount: i32 },
-    SkillCheck { threshold: u8 },
-    ApplyStatus { status: Status, duration: u8 },
-    CureStatus { status: Status },
-    Range { max_range: u8 },
-    Shield { value: i32 },
-    Ability { name: String },
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ActiveEffect {
     pub status: Status,
     pub duration: u8,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub enum PlayerColour {
+    Red,
+    Blue,
+    Green,
+    Yellow,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub enum PlayerClass {
+    Gunslinger,
+    Arsenist,
+    Mage,
+    Knight,
+    Assassin,
+}
+
+impl PlayerClass {
+    pub fn get_signature_card(&self) -> Card {
+        match self {
+            PlayerClass::Gunslinger => Card::create_revolver(),
+            _ => Card::create_stick(),
+        }
+    }
 }

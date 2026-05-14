@@ -2,8 +2,8 @@ use rand::seq::SliceRandom;
 use serde::Serialize;
 
 use crate::{
-    card::Card,
-    models::{ActiveEffect, CardEffect, Player, PlayerColour, Status},
+    card::{Card, CardAbility, CardEffect},
+    models::{ActiveEffect, Player, PlayerClass, PlayerColour, Status},
 };
 
 #[derive(Debug, Serialize, Clone)]
@@ -134,11 +134,18 @@ impl GameState {
 
         let new_id = self.players.iter().map(|p| p.id).max().unwrap_or(0) + 1;
 
-        let classes = vec!["Gunslinger", "Mage", "Knight", "Assassin", "Arsenist"];
-        let taken_classes: Vec<String> = self.players.iter().map(|p| p.class.clone()).collect();
-        let available_classes: Vec<&&str> = classes
+        let classes = vec![
+            PlayerClass::Gunslinger,
+            PlayerClass::Mage,
+            PlayerClass::Knight,
+            PlayerClass::Assassin,
+            PlayerClass::Arsenist,
+        ];
+        let taken_classes: Vec<PlayerClass> =
+            self.players.iter().map(|p| p.class.clone()).collect();
+        let available_classes: Vec<&PlayerClass> = classes
             .iter()
-            .filter(|class| !taken_classes.contains(&class.to_string()))
+            .filter(|class| !taken_classes.contains(&class))
             .collect();
 
         if available_classes.is_empty() {
@@ -146,9 +153,13 @@ impl GameState {
         }
 
         let class_index = rand::random_range(0..available_classes.len());
-        let class = available_classes[class_index].to_string();
+        let given_class = available_classes[class_index];
 
         let mut cards = Vec::new();
+        let mut sig_card = given_class.get_signature_card();
+        sig_card.id = uuid::Uuid::new_v4().to_string();
+        cards.push(sig_card);
+
         for _ in 0..3 {
             if let Some(mut card) = self.deck.pop() {
                 card.id = uuid::Uuid::new_v4().to_string();
@@ -165,7 +176,7 @@ impl GameState {
             max_health: 20,
             shield: 0,
             status_effects: Vec::new(),
-            class,
+            class: given_class.clone(),
             cards,
         };
 
@@ -178,8 +189,11 @@ impl GameState {
         card_id: &str,
         attacker_id: u32,
         target_pos: (u8, u8),
+        use_ability: bool,
     ) -> Result<bool, String> {
-        let (attacker_pos, card_effects, card_name) = {
+        let mut damage_mod = 1.0;
+
+        let (attacker_pos, card_cooldown, card_effects, card_name) = {
             let attacker = self
                 .players
                 .iter()
@@ -194,10 +208,35 @@ impl GameState {
 
             (
                 (attacker.x, attacker.y),
+                card.cooldown,
                 card.effects.clone(),
                 card.name.clone(),
             )
         };
+
+        if card_cooldown > 0 {
+            return Err("Card is on cooldown".to_string());
+        }
+
+        if use_ability {
+            for effect in &card_effects {
+                if let CardEffect::Ability { ability, .. } = effect {
+                    match ability {
+                        CardAbility::DamageMul {
+                            multiplier,
+                            threshold,
+                        } => {
+                            let roll = rand::random_range(1..=6) as u8;
+                            if roll >= *threshold {
+                                damage_mod = *multiplier;
+                            } else {
+                                damage_mod = *multiplier / 2.0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         let distance = (attacker_pos.0 as i16 - target_pos.0 as i16).abs()
             + (attacker_pos.1 as i16 - target_pos.1 as i16).abs();
@@ -210,8 +249,22 @@ impl GameState {
             }
         }
         if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
-            if let Some(idx) = attacker.cards.iter().position(|c| c.id == card_id) {
-                attacker.cards.remove(idx);
+            if let Some(card) = attacker.cards.iter_mut().find(|c| c.id == card_id) {
+                if card.is_signature {
+                    if use_ability {
+                        if let Some(CardEffect::Ability { cooldown, .. }) = card
+                            .effects
+                            .iter()
+                            .find(|e| matches!(e, CardEffect::Ability { .. }))
+                        {
+                            card.cooldown = *cooldown;
+                        }
+                    } else {
+                        card.cooldown = 1;
+                    }
+                } else {
+                    attacker.cards.retain(|c| c.id != card_id);
+                }
             }
         }
 
@@ -236,7 +289,6 @@ impl GameState {
             0i16
         };
 
-        let mut damage_mod = 0;
         for player in self.players.iter_mut() {
             let dx = (player.x as i16 - target_pos.0 as i16).abs();
             let dy = (player.y as i16 - target_pos.1 as i16).abs();
@@ -245,14 +297,12 @@ impl GameState {
             if dist_to_impact <= radius {
                 for effect in &card_effects {
                     match effect {
-                        CardEffect::Ability { name } => match name.as_str() {
-                            _ => {}
-                        },
                         CardEffect::Damage { power } => {
-                            if player.shield >= *power + damage_mod {
-                                player.shield -= *power + damage_mod;
+                            let total_damage = (*power as f32 * damage_mod) as i32;
+                            if player.shield >= total_damage {
+                                player.shield -= total_damage;
                             } else {
-                                let overflow = *power + damage_mod - player.shield;
+                                let overflow = total_damage - player.shield;
                                 player.shield = 0;
                                 player.health = player.health.saturating_sub(overflow);
                             }
