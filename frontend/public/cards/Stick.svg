@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="240.95074"
+   height="337.27783"
+   viewBox="0 0 240.95078 337.27784"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="g1"
+     transform="translate(-736.3016,-694.64763)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.448;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect6"
+       width="239.50278"
+       height="335.8298"
+       x="737.02563"
+       y="695.37164"
+       rx="17.33494"
+       ry="14.657856" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;inline-size:136.983;display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.335667;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="32.194382"
+       y="40.746014"
+       id="text183"
+       transform="matrix(3.5958254,0,0,3.5958254,699.80731,590.54576)"><tspan
+         x="32.194382"
+         y="40.746014"
+         id="tspan1">Stick</tspan></text>
+    <g
+       id="g183"
+       transform="translate(724.19269,676.875)"
+       style="fill:#aeaeae;fill-opacity:1;stroke:#8b8b8b">
+      <rect
+         style="fill:#aeaeae;fill-opacity:1;stroke:#8b8b8b;stroke-width:3.32576;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect183"
+         width="204.05365"
+         height="114.06127"
+         x="28.515463"
+         y="74.045197"
+         rx="17.324856"
+         ry="15.772744" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:23.3205px;font-family:FreeSans;-inkscape-font-specification:FreeSans;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.043;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="831.73907"
+       y="900.99182"
+       id="text184"><tspan
+         id="tspan184"
+         x="831.73907"
+         y="900.99182"
+         style="fill:#000000;fill-opacity:1;stroke-width:1.043;stroke-dasharray:none">Stats</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.266167;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="749.20441"
+       y="920.86279"
+       id="text186"><tspan
+         x="749.20441"
+         y="920.86279"
+         id="tspan185"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none">Attack Power: 1</tspan><tspan
+         x="749.20441"
+         y="942.08844"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none"
+         id="tspan186" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.42918px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4a4a4a;fill-opacity:1;stroke:#4a4a4a;stroke-width:0.190682;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="849.50018"
+       y="876.51788"
+       id="text187"><tspan
+         id="tspan187"
+         x="849.50018"
+         y="876.51788"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.42918px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4a4a4a;fill-opacity:1;stroke:#4a4a4a;stroke-width:0.190682;stroke-opacity:1">Snap</tspan></text>
+    <g
+       id="g189"
+       transform="matrix(1.2738931,0,0,1.2738931,348.97199,151.49817)">
+      <rect
+         style="fill:#9e6e00;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+         id="rect188"
+         width="3.7666349"
+         height="7.1687565"
+         x="-780.11847"
+         y="265.30731"
+         rx="0"
+         ry="0"
+         transform="matrix(-0.80639253,-0.59138066,-0.59138066,0.80639253,0,0)" />
+      <rect
+         style="fill:#9e6e00;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+         id="rect189"
+         width="7.4246211"
+         height="2.9610097"
+         x="-772.29492"
+         y="289.00778"
+         transform="matrix(-0.82612099,-0.56349277,-0.56349277,0.82612099,0,0)" />
+      <path
+         style="fill:#cfcfcf;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+         d="m 473.87927,672.73733 8.79511,-13.15624 -0.64517,-2.4078 -2.5258,0.67679 -8.74914,12.77788 z"
+         id="path189" />
+    </g>
+    <path
+       d="m 844.25036,762.60742 -4.50585,2.125 15.20703,29 0.01,-0.004 -4.13086,33.25781 -26.96093,-31.5293 -1.30079,4.13281 27.64844,32.33203 -3.11523,25.08985 5.35742,1.2168 5.57422,-44.88086 28.86719,-33.75782 -1.30079,-4.13281 -26.74414,31.27539 2.76172,-22.24414 -5.35742,-1.2168 -0.22461,1.8086 z"
+       style="fill:#9e6e00;stroke:#000000;stroke-width:0.763302"
+       id="path193" />
+  </g>
+</svg>

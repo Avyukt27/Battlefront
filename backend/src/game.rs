@@ -236,6 +236,7 @@ impl GameState {
             0i16
         };
 
+        let mut damage_mod = 0;
         for player in self.players.iter_mut() {
             let dx = (player.x as i16 - target_pos.0 as i16).abs();
             let dy = (player.y as i16 - target_pos.1 as i16).abs();
@@ -244,11 +245,14 @@ impl GameState {
             if dist_to_impact <= radius {
                 for effect in &card_effects {
                     match effect {
+                        CardEffect::Ability { name } => match name.as_str() {
+                            _ => {}
+                        },
                         CardEffect::Damage { power } => {
-                            if player.shield >= *power {
-                                player.shield -= *power;
+                            if player.shield >= *power + damage_mod {
+                                player.shield -= *power + damage_mod;
                             } else {
-                                let overflow = power - player.shield;
+                                let overflow = *power + damage_mod - player.shield;
                                 player.shield = 0;
                                 player.health = player.health.saturating_sub(overflow);
                             }

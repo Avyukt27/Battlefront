@@ -19,9 +19,8 @@ const containerStyle: CSSProperties = {
 const cardBase = computed(() => ({
   background: '#fff',
   width: '180px',
-  height: '270px',
+  height: '234px',
   borderRadius: '12px',
-  border: '1px solid #cdcdcd',
   backfaceVisibility: 'hidden' as const,
   transformStyle: 'preserve-3d' as const,
   transition: '.3s ease-out all',
@@ -46,7 +45,7 @@ const handleSelect = () => {
   <div ref="card" class="ease-outduration<300> transition-all">
     <div :style="containerStyle">
       <div :style="[isSelected ? cardActive : cardBase]" @click="handleSelect">
-        <img :src="`/cards/${name}.png`" :alt="name" />
+        <img :src="`/cards/${name}.svg`" :alt="name" />
       </div>
     </div>
   </div>

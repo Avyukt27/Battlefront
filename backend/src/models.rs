@@ -39,6 +39,7 @@ pub enum CardEffect {
     CureStatus { status: Status },
     Range { max_range: u8 },
     Shield { value: i32 },
+    Ability { name: String },
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

@@ -6,6 +6,8 @@ use crate::models::{CardEffect, Status};
 pub struct Card {
     pub id: String,
     pub name: String,
+    pub is_signature: bool,
+    pub cooldown: u8,
     pub effects: Vec<CardEffect>,
 }
 
@@ -14,6 +16,8 @@ impl Card {
         Self {
             id: "".to_string(),
             name: "Stone".to_string(),
+            is_signature: false,
+            cooldown: 0,
             effects: vec![
                 CardEffect::SkillCheck { threshold: 5 },
                 CardEffect::Damage { power: 1 },
@@ -26,6 +30,8 @@ impl Card {
         Self {
             id: "".to_string(),
             name: "Stick".to_string(),
+            is_signature: false,
+            cooldown: 0,
             effects: vec![
                 CardEffect::Damage { power: 1 },
                 CardEffect::Range { max_range: 1 },
@@ -37,6 +43,8 @@ impl Card {
         Self {
             id: "".to_string(),
             name: "Bandage".to_string(),
+            is_signature: false,
+            cooldown: 0,
             effects: vec![
                 CardEffect::Heal { amount: 2 },
                 CardEffect::CureStatus {
@@ -51,6 +59,8 @@ impl Card {
         Self {
             id: "".to_string(),
             name: "Shield".to_string(),
+            is_signature: false,
+            cooldown: 0,
             effects: vec![
                 CardEffect::Shield { value: 1 },
                 CardEffect::Range { max_range: 0 },
