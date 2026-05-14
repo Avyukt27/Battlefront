@@ -18,9 +18,12 @@ const store = useGameStore();
         <span class="font-bold" :style="{ color: player.colour }">{{ player.class }}</span>
         <span class="text-xs font-mono">{{ player.health }} / {{ player.max_health }}</span>
       </div>
-      <p v-if="player.id === store.myPlayerId" class="text-[10px] text-indigo-400 mt-1 uppercase font-bold">
-        (You)
-      </p>
+      <div class="flex flex-row justify-between">
+        <span class="text-xs font-mono">Shield: {{ player.shield }}</span>
+        <p v-if="player.id === store.myPlayerId" class="text-[10px] text-indigo-400 mt-1 uppercase font-bold">
+          [You]
+        </p>
+      </div>
     </div>
   </aside>
 </template>

@@ -30,7 +30,7 @@ export interface Player {
   y: number;
   health: number;
   max_health: number;
-  sheidl: number;
+  shield: number;
   status_effects: ActiveEffect[];
   class: string;
   cards: Card[];

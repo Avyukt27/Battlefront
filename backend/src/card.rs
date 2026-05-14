@@ -51,7 +51,10 @@ impl Card {
         Self {
             id: "".to_string(),
             name: "Shield".to_string(),
-            effects: vec![CardEffect::Shield { value: 1 }],
+            effects: vec![
+                CardEffect::Shield { value: 1 },
+                CardEffect::Range { max_range: 0 },
+            ],
         }
     }
 }
