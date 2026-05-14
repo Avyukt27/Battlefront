@@ -34,7 +34,10 @@ const isTargetable = computed(() => {
   const card = myPlayer.value.cards.find((c) => c.id === store.selectedCardId);
   if (!card) return false;
 
-  const rangeEffect = card.effects.find((e) => 'Range' in e);
+  const rangeEffect = card.effects.find(
+    (e): e is { Range: { max_range: number } } =>
+      typeof e === 'object' && e !== null && 'Range' in e,
+  );
   if (rangeEffect && 'Range' in rangeEffect) {
     const range = rangeEffect.Range.max_range;
     const startX = myPlayer.value.x;

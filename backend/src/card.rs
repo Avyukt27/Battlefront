@@ -69,6 +69,81 @@ impl Card {
         }
     }
 
+    pub fn create_sword() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Sword".to_string(),
+            is_signature: false,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 1 },
+            ],
+        }
+    }
+
+    pub fn create_poison_bomb() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Poison Bomb".to_string(),
+            is_signature: false,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Range { max_range: 2 },
+                CardEffect::ApplyStatus {
+                    status: Status::Poison,
+                    duration: 2,
+                },
+            ],
+        }
+    }
+
+    pub fn create_antidote() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Antidote".to_string(),
+            is_signature: false,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::CureStatus {
+                    status: Status::Poison,
+                },
+                CardEffect::Range { max_range: 0 },
+            ],
+        }
+    }
+
+    pub fn create_spiked_bat() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Spiked Bat".to_string(),
+            is_signature: false,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 1 },
+                CardEffect::ApplyStatus {
+                    status: Status::Fracture,
+                    duration: 3,
+                },
+            ],
+        }
+    }
+
+    pub fn create_fangs() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Fangs".to_string(),
+            is_signature: false,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::LifeSteal,
+                CardEffect::Range { max_range: 1 },
+            ],
+        }
+    }
+
     pub fn create_revolver() -> Self {
         Self {
             id: "".to_string(),
@@ -176,6 +251,7 @@ pub enum CardEffect {
     Shield { value: i32 },
     Ability { ability: CardAbility, cooldown: u8 },
     Ignite,
+    LifeSteal,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

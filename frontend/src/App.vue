@@ -9,7 +9,6 @@ let pollInterval: number;
 
 onMounted(async () => {
   if (store.gameId) {
-    console.log('Reconnecting to game: ', store.gameId);
     await store.fetchState();
   }
 

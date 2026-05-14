@@ -14,6 +14,8 @@ export enum PlayerClass {
 export type CardAbility = { DamageMul: { multiplier: number; threshold: number } } | 'ShieldPierce';
 
 export type CardEffect =
+  | 'Ignite'
+  | 'LifeSteal'
   | { Damage: { power: number } }
   | { Heal: { amount: number } }
   | { SkillCheck: { threshold: number } }
@@ -21,8 +23,7 @@ export type CardEffect =
   | { CureStatus: { status: Status } }
   | { Range: { max_range: number } }
   | { Shield: { value: number } }
-  | { Ability: { ability: CardAbility; cooldown: number } }
-  | 'Ignite';
+  | { Ability: { ability: CardAbility; cooldown: number } };
 
 export interface Card {
   id: string;

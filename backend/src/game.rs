@@ -219,9 +219,6 @@ impl GameState {
         target_pos: (u8, u8),
         use_ability: bool,
     ) -> Result<bool, String> {
-        let mut damage_mod = 1.0;
-        let mut shield_bypass = false;
-
         let (attacker_pos, card_cooldown, card_effects, card_name) = {
             let attacker = self
                 .players
@@ -242,6 +239,13 @@ impl GameState {
                 card.name.clone(),
             )
         };
+
+        let mut damage_mod = 1.0;
+        let mut shield_bypass = false;
+        let mut life_stolen = 0;
+        let has_lifesteal = card_effects
+            .iter()
+            .any(|e| matches!(e, CardEffect::LifeSteal));
 
         if card_cooldown > 0 {
             return Err("Card is on cooldown".to_string());
@@ -339,6 +343,7 @@ impl GameState {
                     match effect {
                         CardEffect::Damage { power } => {
                             let final_dmg = (*power as f32 * damage_mod) as i32;
+                            let initial_health = player.health;
                             if !shield_bypass {
                                 if player.shield >= final_dmg {
                                     player.shield -= final_dmg;
@@ -349,6 +354,9 @@ impl GameState {
                                 }
                             } else {
                                 player.health = player.health.saturating_sub(final_dmg);
+                            }
+                            if has_lifesteal && player.id != attacker_id {
+                                life_stolen += (initial_health - player.health).max(0);
                             }
                         }
                         CardEffect::ApplyStatus { status, duration } => {
@@ -388,6 +396,12 @@ impl GameState {
             }
         }
 
+        if life_stolen > 0 {
+            if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
+                attacker.health = (attacker.health + life_stolen).min(attacker.max_health);
+            }
+        }
+
         Ok(true)
     }
 
@@ -397,14 +411,17 @@ impl GameState {
         for _ in 0..4 {
             new_deck.push(Card::create_stone());
         }
-        for _ in 0..5 {
-            new_deck.push(Card::create_stick());
-        }
-        for _ in 0..3 {
-            new_deck.push(Card::create_bandage());
-        }
+        // for _ in 0..5 {
+        //     new_deck.push(Card::create_stick());
+        // }
+        // for _ in 0..3 {
+        //     new_deck.push(Card::create_bandage());
+        // }
+        // for _ in 0..4 {
+        //     new_deck.push(Card::create_shield());
+        // }
         for _ in 0..4 {
-            new_deck.push(Card::create_shield());
+            new_deck.push(Card::create_fangs());
         }
 
         let mut rng = rand::rng();
