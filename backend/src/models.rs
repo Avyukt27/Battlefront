@@ -51,12 +51,13 @@ pub enum PlayerClass {
 }
 
 impl PlayerClass {
-    pub fn get_signature_card(&self) -> Card {
+    pub fn get_signature_cards(&self) -> Vec<Card> {
         match self {
-            Self::Gunslinger => Card::create_revolver(),
-            Self::Mage => Card::create_staff(),
-            Self::Assassin => Card::create_dagger(),
-            _ => Card::create_stick(),
+            Self::Gunslinger => vec![Card::create_revolver()],
+            Self::Mage => vec![Card::create_staff()],
+            Self::Knight => vec![Card::create_royal_sword(), Card::create_royal_shield()],
+            Self::Assassin => vec![Card::create_dagger()],
+            _ => vec![Card::create_stick()],
         }
     }
 }

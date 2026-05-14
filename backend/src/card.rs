@@ -110,6 +110,32 @@ impl Card {
         }
     }
 
+    pub fn create_royal_sword() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Royal Sword".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 1 },
+            ],
+        }
+    }
+
+    pub fn create_royal_shield() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Royal Shield".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Shield { value: 2 },
+                CardEffect::Range { max_range: 0 },
+            ],
+        }
+    }
+
     pub fn create_dagger() -> Self {
         Self {
             id: "".to_string(),

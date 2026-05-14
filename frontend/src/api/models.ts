@@ -1,5 +1,5 @@
 export enum Status {
-  Bleed,
+  Fracture,
   Poison,
 }
 
@@ -11,9 +11,7 @@ export enum PlayerClass {
   Assassin,
 }
 
-export type CardAbility =
-  | { DamageMul: { multiplier: number; threshold: number } }
-  | { ShieldPierce: {} };
+export type CardAbility = { DamageMul: { multiplier: number; threshold: number } } | 'ShieldPierce';
 
 export type CardEffect =
   | { Damage: { power: number } }

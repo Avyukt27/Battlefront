@@ -142,8 +142,8 @@ impl GameState {
 
         let classes = vec![
             PlayerClass::Gunslinger,
-            // PlayerClass::Mage,
-            // PlayerClass::Knight,
+            PlayerClass::Mage,
+            PlayerClass::Knight,
             PlayerClass::Assassin,
             // PlayerClass::Arsenist,
         ];
@@ -161,10 +161,12 @@ impl GameState {
         let class_index = rand::random_range(0..available_classes.len());
         let given_class = available_classes[class_index];
 
-        let mut cards = Vec::new();
-        let mut sig_card = given_class.get_signature_card();
-        sig_card.id = uuid::Uuid::new_v4().to_string();
-        cards.push(sig_card);
+        let mut cards: Vec<Card> = Vec::new();
+        let mut sig_cards = given_class.get_signature_cards();
+        for sig_card in sig_cards.iter_mut() {
+            sig_card.id = uuid::Uuid::new_v4().to_string();
+            cards.push(sig_card.clone());
+        }
 
         for _ in 0..3 {
             if let Some(mut card) = self.deck.pop() {
