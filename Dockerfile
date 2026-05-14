@@ -21,7 +21,7 @@ COPY --from=backend-builder /build/backend/target/release/backend ./battlefront
 COPY --from=frontend-builder /build/frontend/dist ./dist
 
 ENV RUST_LOG=info
-ENV PORT=8080
-EXPOSE 8080
+ENV PORT=3000 
+EXPOSE 3000
 
 CMD ["./battlefront"]

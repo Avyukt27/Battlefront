@@ -7,7 +7,10 @@ use axum::{
     routing::{get, post},
 };
 use serde_json::{Value, json};
-use tower_http::cors::CorsLayer;
+use tower_http::{
+    cors::CorsLayer,
+    services::{ServeDir, ServeFile},
+};
 
 use crate::{
     ServerState,
@@ -16,18 +19,24 @@ use crate::{
 };
 
 pub fn create_routes(state: Arc<ServerState>) -> Router {
+    let routes = Router::new()
+        .route("/state/{game_id}", get(get_state_handler))
+        .route("/roll/{game_id}", post(roll_dice_handler))
+        .route("/move/{game_id}", post(move_player_handler))
+        .route("/join/{game_id}", post(join_game_handler))
+        .route("/leave/{game_id}", post(leave_game_handler))
+        .route("/create", post(create_game_handler))
+        .route("/draw/{game_id}", post(draw_card_handler))
+        .route("/use/{game_id}", post(use_card_handler))
+        .route("/end/{game_id}", post(end_turn_handler))
+        .with_state(state);
+
     Router::new()
-        .route("/api/state/{game_id}", get(get_state_handler))
-        .route("/api/roll/{game_id}", post(roll_dice_handler))
-        .route("/api/move/{game_id}", post(move_player_handler))
-        .route("/api/join/{game_id}", post(join_game_handler))
-        .route("/api/leave/{game_id}", post(leave_game_handler))
-        .route("/api/create", post(create_game_handler))
-        .route("/api/draw/{game_id}", post(draw_card_handler))
-        .route("/api/use/{game_id}", post(use_card_handler))
-        .route("/api/end/{game_id}", post(end_turn_handler))
+        .nest("/api", routes)
+        .fallback_service(
+            ServeDir::new("dist").not_found_service(ServeFile::new("dist/index.html")),
+        )
         .layer(CorsLayer::permissive())
-        .with_state(state)
 }
 
 pub async fn roll_dice_handler(
