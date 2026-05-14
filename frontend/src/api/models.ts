@@ -9,7 +9,8 @@ export type CardEffect =
   | { SkillCheck: { threshold: number } }
   | { ApplyStatus: { status: Status; duration: number } }
   | { CureStatus: { status: Status } }
-  | { Range: { max_range: number } };
+  | { Range: { max_range: number } }
+  | { Shield: { value: number } };
 
 export interface Card {
   id: string;
@@ -29,6 +30,7 @@ export interface Player {
   y: number;
   health: number;
   max_health: number;
+  shield: number;
   status_effects: ActiveEffect[];
   class: string;
   cards: Card[];

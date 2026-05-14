@@ -1,7 +1,10 @@
 use rand::seq::SliceRandom;
 use serde::Serialize;
 
-use crate::models::{ActiveEffect, Card, CardEffect, Player, PlayerColour, Status};
+use crate::{
+    card::Card,
+    models::{ActiveEffect, CardEffect, Player, PlayerColour, Status},
+};
 
 #[derive(Debug, Serialize, Clone)]
 pub struct GameState {
@@ -160,6 +163,7 @@ impl GameState {
             y: start_y,
             health: 20,
             max_health: 20,
+            shield: 0,
             status_effects: Vec::new(),
             class,
             cards,
@@ -205,7 +209,6 @@ impl GameState {
                 }
             }
         }
-
         if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
             if let Some(idx) = attacker.cards.iter().position(|c| c.id == card_id) {
                 attacker.cards.remove(idx);
@@ -223,7 +226,6 @@ impl GameState {
                 }
             }
         }
-
         if !hit_landed {
             return Ok(false);
         }
@@ -243,7 +245,13 @@ impl GameState {
                 for effect in &card_effects {
                     match effect {
                         CardEffect::Damage { power } => {
-                            player.health = player.health.saturating_sub(*power);
+                            if player.shield >= *power {
+                                player.shield -= *power;
+                            } else {
+                                let overflow = power - player.shield;
+                                player.shield = 0;
+                                player.health = player.health.saturating_sub(overflow);
+                            }
                         }
                         CardEffect::ApplyStatus { status, duration } => {
                             if let Some(s) = player
@@ -273,6 +281,9 @@ impl GameState {
                         CardEffect::CureStatus { status } => {
                             player.status_effects.retain(|e| e.status != *status);
                         }
+                        CardEffect::Shield { value } => {
+                            player.shield = (player.shield + *value).min(5);
+                        }
                         _ => {}
                     }
                 }
@@ -293,6 +304,9 @@ impl GameState {
         }
         for _ in 0..3 {
             new_deck.push(Card::create_bandage());
+        }
+        for _ in 0..4 {
+            new_deck.push(Card::create_shield());
         }
 
         let mut rng = rand::rng();

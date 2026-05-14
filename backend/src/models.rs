@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::card::Card;
+
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
 pub enum PlayerColour {
     Red,
@@ -16,6 +18,7 @@ pub struct Player {
     pub y: u8,
     pub health: i32,
     pub max_health: i32,
+    pub shield: i32,
     pub status_effects: Vec<ActiveEffect>,
     pub class: String,
     pub cards: Vec<Card>,
@@ -35,52 +38,7 @@ pub enum CardEffect {
     ApplyStatus { status: Status, duration: u8 },
     CureStatus { status: Status },
     Range { max_range: u8 },
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Card {
-    pub id: String,
-    pub name: String,
-    pub effects: Vec<CardEffect>,
-}
-
-impl Card {
-    pub fn create_stone() -> Self {
-        Self {
-            id: "".to_string(),
-            name: "Stone".to_string(),
-            effects: vec![
-                CardEffect::SkillCheck { threshold: 5 },
-                CardEffect::Damage { power: 1 },
-                CardEffect::Range { max_range: 4 },
-            ],
-        }
-    }
-
-    pub fn create_stick() -> Self {
-        Self {
-            id: "".to_string(),
-            name: "Stick".to_string(),
-            effects: vec![
-                CardEffect::Damage { power: 1 },
-                CardEffect::Range { max_range: 1 },
-            ],
-        }
-    }
-
-    pub fn create_bandage() -> Self {
-        Self {
-            id: "".to_string(),
-            name: "Bandage".to_string(),
-            effects: vec![
-                CardEffect::Heal { amount: 2 },
-                CardEffect::CureStatus {
-                    status: Status::Bleed,
-                },
-                CardEffect::Range { max_range: 0 },
-            ],
-        }
-    }
+    Shield { value: i32 },
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
