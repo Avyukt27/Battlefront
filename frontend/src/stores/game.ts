@@ -148,6 +148,10 @@ export const useGameStore = defineStore('game', () => {
     gameId.value = null;
     myPlayerId.value = null;
     gameState.value = null;
+    isRolling.value = false;
+    isDrawing.value = false;
+    doneMoving.value = false;
+    donePlaying.value = false;
 
     localStorage.removeItem('gameId');
     localStorage.removeItem('playerId');

@@ -54,6 +54,7 @@ impl PlayerClass {
     pub fn get_signature_card(&self) -> Card {
         match self {
             PlayerClass::Gunslinger => Card::create_revolver(),
+            PlayerClass::Mage => Card::create_staff(),
             _ => Card::create_stick(),
         }
     }

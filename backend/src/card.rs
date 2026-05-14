@@ -77,13 +77,33 @@ impl Card {
             cooldown: 0,
             effects: vec![
                 CardEffect::Damage { power: 2 },
-                CardEffect::Range { max_range: 4 },
+                CardEffect::Range { max_range: 5 },
                 CardEffect::Ability {
                     ability: CardAbility::DamageMul {
                         multiplier: 3.0,
                         threshold: 0,
                     },
                     cooldown: 3,
+                },
+            ],
+        }
+    }
+
+    pub fn create_staff() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Staff".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 5 },
+                CardEffect::Ability {
+                    ability: CardAbility::DamageMul {
+                        multiplier: 2.0,
+                        threshold: 4,
+                    },
+                    cooldown: 2,
                 },
             ],
         }

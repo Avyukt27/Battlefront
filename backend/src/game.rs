@@ -99,8 +99,11 @@ impl GameState {
                 }
                 effect.duration = effect.duration.saturating_sub(1);
             }
-
             player.status_effects.retain(|e| e.duration > 0);
+
+            for card in player.cards.iter_mut() {
+                card.cooldown = card.cooldown.saturating_sub(1);
+            }
         }
 
         if let Some(index) = self
@@ -138,9 +141,9 @@ impl GameState {
         let classes = vec![
             PlayerClass::Gunslinger,
             PlayerClass::Mage,
-            PlayerClass::Knight,
-            PlayerClass::Assassin,
-            PlayerClass::Arsenist,
+            // PlayerClass::Knight,
+            // PlayerClass::Assassin,
+            // PlayerClass::Arsenist,
         ];
         let taken_classes: Vec<PlayerClass> =
             self.players.iter().map(|p| p.class.clone()).collect();
@@ -231,7 +234,7 @@ impl GameState {
                             if roll >= *threshold {
                                 damage_mod = *multiplier;
                             } else {
-                                damage_mod = *multiplier / 2.0;
+                                damage_mod = 1.0 / *multiplier;
                             }
                         }
                     }

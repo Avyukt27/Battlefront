@@ -7,9 +7,31 @@
    width="240.95074"
    height="337.27783"
    viewBox="0 0 240.95078 337.27784"
+   sodipodi:docname="Staff.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="2.5765109"
+     inkscape:cx="120.51181"
+     inkscape:cy="168.63892"
+     inkscape:window-width="1908"
+     inkscape:window-height="1020"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1" />
   <defs
      id="defs1">
     <symbol
@@ -52,7 +74,7 @@
        transform="matrix(3.5958254,0,0,3.5958254,458.36564,253.67076)"><tspan
          x="32.194382"
          y="40.746014"
-         id="tspan1">Staff</tspan></text>
+         id="tspan2">Staff</tspan></text>
     <g
        id="g85"
        transform="translate(484.23474,340)"
@@ -124,7 +146,7 @@
          x="509.24646"
          y="645.21344"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none"
-         id="tspan114">              &gt;4, Double Damage</tspan><tspan
+         id="tspan114">              &gt;3, Double Damage</tspan><tspan
          x="509.24646"
          y="666.43903"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none"

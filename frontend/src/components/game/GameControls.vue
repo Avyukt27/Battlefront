@@ -6,13 +6,14 @@ const store = useGameStore();
 
 const myPlayer = computed(() => store.gameState?.players.find((p) => p.id === store.myPlayerId));
 const isMyTurn = computed(() => store.gameState?.currentTurn === myPlayer.value?.colour);
-const handFull = computed(() => (myPlayer.value?.cards.length ?? 0) >= 3);
+const inventoryCards = computed(() => myPlayer.value?.cards.filter((c) => !c.isSignature) ?? []);
+const handFull = computed(() => (inventoryCards.value.length ?? 0) >= 3);
 const roll = computed(() => store.gameState?.lastRoll);
 const playerCount = computed(() => store.gameState?.players.length ?? 0);
 
 const handleDraw = async () => {
   if (!myPlayer.value || handFull.value) return;
-  const cardsNeeded = 3 - myPlayer.value.cards.length;
+  const cardsNeeded = 3 - inventoryCards.value.length;
   for (let i = 0; i < cardsNeeded; i++) {
     await store.drawCard();
   }
