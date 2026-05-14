@@ -26,7 +26,7 @@ export type CardEffect =
 export interface Card {
   id: string;
   name: string;
-  is_signature: boolean;
+  isSignature: boolean;
   cooldown: number;
   effects: CardEffect[];
 }
@@ -42,17 +42,17 @@ export interface Player {
   x: number;
   y: number;
   health: number;
-  max_health: number;
+  maxHealth: number;
   shield: number;
-  status_effects: ActiveEffect[];
+  statusEffects: ActiveEffect[];
   class: PlayerClass;
   cards: Card[];
 }
 
 export interface GameState {
   players: Player[];
-  current_turn: string;
-  last_roll: number;
+  currentTurn: string;
+  lastRoll: number;
   width: number;
   height: number;
 }

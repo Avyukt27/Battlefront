@@ -19,10 +19,7 @@ export const gameApi = {
     return res.json();
   },
 
-  async makeMove(
-    gameId: string,
-    payload: { player_id: number; target_x: number; target_y: number },
-  ) {
+  async makeMove(gameId: string, payload: { playerId: number; targetX: number; targetY: number }) {
     const res = await fetch(`${BASE_URL}/move/${gameId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -41,10 +38,10 @@ export const gameApi = {
   async useCard(
     gameId: string,
     payload: {
-      card_id: string;
-      attacker_id: number;
-      target_pos: [number, number];
-      use_ability: boolean;
+      cardId: string;
+      attackerId: number;
+      targetPos: [number, number];
+      useAbility: boolean;
     },
   ) {
     const res = await fetch(`${BASE_URL}/use/${gameId}`, {
@@ -56,7 +53,7 @@ export const gameApi = {
     return res.json();
   },
 
-  async drawCard(gameId: string, payload: { player_id: number }) {
+  async drawCard(gameId: string, payload: { playerId: number }) {
     const res = await fetch(`${BASE_URL}/draw/${gameId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -66,8 +63,8 @@ export const gameApi = {
     return res.json();
   },
 
-  async endTurn(gameId: string, payload: { player_id: number }) {
-    const res = await fetch(`${BASE_URL}/end_turn/${gameId}`, {
+  async endTurn(gameId: string, payload: { playerId: number }) {
+    const res = await fetch(`${BASE_URL}/end/${gameId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -76,7 +73,7 @@ export const gameApi = {
     return res.json();
   },
 
-  async leaveGame(gameId: string, payload: { player_id: number }) {
+  async leaveGame(gameId: string, payload: { playerId: number }) {
     const res = await fetch(`${BASE_URL}/leave/${gameId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

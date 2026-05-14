@@ -5,11 +5,9 @@ import { gameApi } from '@/api/gameClient';
 
 export const useGameStore = defineStore('game', () => {
   const gameState = ref<GameState | null>(null);
-  const gameId = ref<string | null>(localStorage.getItem('saved_game_id'));
+  const gameId = ref<string | null>(localStorage.getItem('gameId'));
   const myPlayerId = ref<number | null>(
-    localStorage.getItem('saved_player_id')
-      ? Number(localStorage.getItem('saved_player_id'))
-      : null,
+    localStorage.getItem('playerId') ? Number(localStorage.getItem('playerId')) : null,
   );
 
   const isRolling = ref(false);
@@ -37,7 +35,7 @@ export const useGameStore = defineStore('game', () => {
   async function createGame() {
     try {
       const data = await gameApi.createGame();
-      gameId.value = data.game_id;
+      gameId.value = data.gameId;
     } catch (err) {
       setError('Failed to create game');
     }
@@ -46,11 +44,11 @@ export const useGameStore = defineStore('game', () => {
   async function joinGame(id: string) {
     try {
       const data = await gameApi.joinGame(id);
-      myPlayerId.value = data.player_id;
+      myPlayerId.value = data.playerId;
       gameId.value = id;
       gameState.value = data.state;
-      localStorage.setItem('saved_game_id', id);
-      localStorage.setItem('saved_player_id', data.player_id.toString());
+      localStorage.setItem('gameId', id);
+      localStorage.setItem('playerId', data.playerId.toString());
     } catch (err) {
       handleActionError(err);
     }
@@ -69,9 +67,9 @@ export const useGameStore = defineStore('game', () => {
     if (!gameId.value) return;
     try {
       gameState.value = await gameApi.makeMove(gameId.value, {
-        player_id: playerId,
-        target_x: x,
-        target_y: y,
+        playerId: playerId,
+        targetX: x,
+        targetY: y,
       });
       doneMoving.value = true;
     } catch (err) {
@@ -91,14 +89,14 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  async function useCard(targetX: number, targetY: number, use_ability: boolean) {
+  async function useCard(targetX: number, targetY: number, useAbility: boolean) {
     if (!selectedCardId.value || !gameId.value) return;
     try {
       const data = await gameApi.useCard(gameId.value, {
-        card_id: selectedCardId.value,
-        attacker_id: myPlayerId.value!,
-        target_pos: [targetX, targetY],
-        use_ability,
+        cardId: selectedCardId.value,
+        attackerId: myPlayerId.value!,
+        targetPos: [targetX, targetY],
+        useAbility,
       });
       gameState.value = data[0];
       selectedCardId.value = null;
@@ -116,7 +114,7 @@ export const useGameStore = defineStore('game', () => {
     if (isDrawing.value || !gameId.value || !myPlayerId.value) return;
     isDrawing.value = true;
     try {
-      gameState.value = await gameApi.drawCard(gameId.value, { player_id: myPlayerId.value });
+      gameState.value = await gameApi.drawCard(gameId.value, { playerId: myPlayerId.value });
       donePlaying.value = true;
     } catch (err) {
       handleActionError(err);
@@ -128,7 +126,7 @@ export const useGameStore = defineStore('game', () => {
   async function endTurn() {
     if (!gameId.value || !myPlayerId.value) return;
     try {
-      gameState.value = await gameApi.endTurn(gameId.value, { player_id: myPlayerId.value });
+      gameState.value = await gameApi.endTurn(gameId.value, { playerId: myPlayerId.value });
       doneMoving.value = false;
       donePlaying.value = false;
     } catch (err) {
@@ -140,7 +138,7 @@ export const useGameStore = defineStore('game', () => {
     if (gameId.value && myPlayerId.value) {
       try {
         await gameApi.leaveGame(gameId.value, {
-          player_id: myPlayerId.value,
+          playerId: myPlayerId.value,
         });
       } catch (err) {
         console.error('Failed to notify server of departure:', err);
@@ -152,7 +150,7 @@ export const useGameStore = defineStore('game', () => {
     gameState.value = null;
 
     localStorage.removeItem('gameId');
-    localStorage.removeItem('myPlayerId');
+    localStorage.removeItem('playerId');
   }
 
   function selectCard(cardId: string) {

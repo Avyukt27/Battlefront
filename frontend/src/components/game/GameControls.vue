@@ -5,9 +5,9 @@ import { computed } from 'vue';
 const store = useGameStore();
 
 const myPlayer = computed(() => store.gameState?.players.find((p) => p.id === store.myPlayerId));
-const isMyTurn = computed(() => store.gameState?.current_turn === myPlayer.value?.colour);
+const isMyTurn = computed(() => store.gameState?.currentTurn === myPlayer.value?.colour);
 const handFull = computed(() => (myPlayer.value?.cards.length ?? 0) >= 3);
-const roll = computed(() => store.gameState?.last_roll);
+const roll = computed(() => store.gameState?.lastRoll);
 const playerCount = computed(() => store.gameState?.players.length ?? 0);
 
 const handleDraw = async () => {
@@ -31,7 +31,7 @@ const handleDraw = async () => {
       @click="store.rollDice"
       :disabled="store.isRolling || roll !== 0 || !isMyTurn || store.doneMoving || playerCount < 2">
       <span v-if="store.isRolling && roll === 0">Rolling...</span>
-      <span v-else-if="roll !== 0">Waiting for {{ store.gameState?.current_turn }}</span>
+      <span v-else-if="roll !== 0">Waiting for {{ store.gameState?.currentTurn }}</span>
       <span v-else>Roll Dice</span>
     </button>
     <button @click="handleDraw"

@@ -10,13 +10,13 @@ const store = useGameStore();
 
     <div v-for="player in store.gameState?.players" :key="player.id" :class="[
       'p-3 rounded-lg border transition-all',
-      store.gameState?.current_turn === player.colour
+      store.gameState?.currentTurn === player.colour
         ? 'bg-indigo-500/20 border-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.3)]'
         : 'bg-slate-800/40 border-transparent opacity-70',
     ]">
       <div class="flex justify-between items-center mb-2">
         <span class="font-bold" :style="{ color: player.colour }">{{ player.class }}</span>
-        <span class="text-xs font-mono">{{ player.health }} / {{ player.max_health }}</span>
+        <span class="text-xs font-mono">{{ player.health }} / {{ player.maxHealth }}</span>
       </div>
       <div class="flex flex-row justify-between">
         <span class="text-xs font-mono">Shield: {{ player.shield }}</span>

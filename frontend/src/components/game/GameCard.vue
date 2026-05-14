@@ -35,7 +35,7 @@ const cardActive = computed(() => ({
 
 const handleSelect = () => {
   if (!store.doneMoving || !myPlayer.value || !store.gameState || store.donePlaying) return;
-  if (!(myPlayer.value.colour === store.gameState.current_turn)) return;
+  if (!(myPlayer.value.colour === store.gameState.currentTurn)) return;
 
   store.selectCard(props.id);
 };

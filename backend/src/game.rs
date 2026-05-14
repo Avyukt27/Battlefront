@@ -7,6 +7,7 @@ use crate::{
 };
 
 #[derive(Debug, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct GameState {
     pub players: Vec<Player>,
     pub current_turn: PlayerColour,

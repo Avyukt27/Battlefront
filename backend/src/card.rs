@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use crate::models::Status;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Card {
     pub id: String,
     pub name: String,
@@ -90,6 +91,7 @@ impl Card {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "PascalCase")]
 pub enum CardEffect {
     Damage { power: i32 },
     Heal { amount: i32 },
@@ -102,6 +104,7 @@ pub enum CardEffect {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "PascalCase")]
 pub enum CardAbility {
     DamageMul { multiplier: f32, threshold: u8 },
 }

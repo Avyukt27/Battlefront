@@ -10,8 +10,8 @@ const store = useGameStore();
 const showReveal = ref(store.myPlayerId ? false : true);
 
 const myPlayer = computed(() => store.gameState?.players.find((p) => p.id === store.myPlayerId));
-const signatureCards = computed(() => myPlayer.value?.cards.filter((c) => c.is_signature) ?? []);
-const inventoryCards = computed(() => myPlayer.value?.cards.filter((c) => !c.is_signature) ?? []);
+const signatureCards = computed(() => myPlayer.value?.cards.filter((c) => c.isSignature) ?? []);
+const inventoryCards = computed(() => myPlayer.value?.cards.filter((c) => !c.isSignature) ?? []);
 
 onMounted(() => {
   setTimeout(() => {

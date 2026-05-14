@@ -8,7 +8,7 @@ const player = computed(() =>
   store.gameState?.players.find((p) => p.x === props.x && p.y === props.y),
 );
 const myPlayer = computed(() => store.gameState?.players.find((p) => p.id === store.myPlayerId));
-const isCurrentTurn = computed(() => store.gameState?.current_turn === player.value?.colour);
+const isCurrentTurn = computed(() => store.gameState?.currentTurn === player.value?.colour);
 
 const colorMap: Record<string, string> = {
   Red: 'bg-red-600 border-red-400',
@@ -19,13 +19,13 @@ const colorMap: Record<string, string> = {
 
 const isReachable = computed(() => {
   const state = store.gameState;
-  if (!state || !myPlayer.value || state.last_roll === 0) return false;
-  if (state.current_turn !== myPlayer.value.colour) return false;
+  if (!state || !myPlayer.value || state.lastRoll === 0) return false;
+  if (state.currentTurn !== myPlayer.value.colour) return false;
 
   const dx = Math.abs(myPlayer.value.x - props.x);
   const dy = Math.abs(myPlayer.value.y - props.y);
   const distance = dx + dy;
-  return distance > 0 && distance <= state.last_roll;
+  return distance > 0 && distance <= state.lastRoll;
 });
 
 const isTargetable = computed(() => {
@@ -54,7 +54,7 @@ const handleMove = () => {
   }
 
   if (store.selectedCardId) {
-    store.useCard(props.x, props.y);
+    store.useCard(props.x, props.y, false);
   } else {
     store.makeMove(store.myPlayerId, props.x, props.y);
   }

@@ -1,6 +1,7 @@
 use serde::Deserialize;
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct MoveRequest {
     pub player_id: u32,
     pub target_x: u8,
@@ -8,6 +9,7 @@ pub struct MoveRequest {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct UseCardRequest {
     pub card_id: String,
     pub attacker_id: u32,
@@ -16,6 +18,7 @@ pub struct UseCardRequest {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PlayerRequest {
     pub player_id: u32,
 }
