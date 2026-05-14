@@ -3,6 +3,16 @@ export enum Status {
   Poison,
 }
 
+export enum PlayerClass {
+  Gunslinger,
+  Arsenist,
+  Mage,
+  Knight,
+  Assassin,
+}
+
+export type CardAbility = { DamageMul: { multiplier: number; threshold: number } };
+
 export type CardEffect =
   | { Damage: { power: number } }
   | { Heal: { amount: number } }
@@ -10,11 +20,14 @@ export type CardEffect =
   | { ApplyStatus: { status: Status; duration: number } }
   | { CureStatus: { status: Status } }
   | { Range: { max_range: number } }
-  | { Shield: { value: number } };
+  | { Shield: { value: number } }
+  | { Ability: { ability: CardAbility; cooldown: number } };
 
 export interface Card {
   id: string;
   name: string;
+  is_signature: boolean;
+  cooldown: number;
   effects: CardEffect[];
 }
 
@@ -32,7 +45,7 @@ export interface Player {
   max_health: number;
   shield: number;
   status_effects: ActiveEffect[];
-  class: string;
+  class: PlayerClass;
   cards: Card[];
 }
 

@@ -40,7 +40,12 @@ export const gameApi = {
 
   async useCard(
     gameId: string,
-    payload: { card_id: string; attacker_id: number; target_pos: [number, number] },
+    payload: {
+      card_id: string;
+      attacker_id: number;
+      target_pos: [number, number];
+      use_ability: boolean;
+    },
   ) {
     const res = await fetch(`${BASE_URL}/use/${gameId}`, {
       method: 'POST',

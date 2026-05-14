@@ -10,6 +10,8 @@ const store = useGameStore();
 const showReveal = ref(store.myPlayerId ? false : true);
 
 const myPlayer = computed(() => store.gameState?.players.find((p) => p.id === store.myPlayerId));
+const signatureCards = computed(() => myPlayer.value?.cards.filter((c) => c.is_signature) ?? []);
+const inventoryCards = computed(() => myPlayer.value?.cards.filter((c) => !c.is_signature) ?? []);
 
 onMounted(() => {
   setTimeout(() => {
@@ -41,9 +43,24 @@ onMounted(() => {
         </div>
       </div>
 
-      <div
-        class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm w-150 shrink-0 flex flex-row gap-4 items-center justify-center min-h-67.5">
-        <GameCard v-for="card in myPlayer?.cards" :key="card.id" :id="card.id" :name="card.name" />
+      <div class="flex flex-row gap-4 items-stretch justify-center w-full">
+        <div v-if="signatureCards.length > 0"
+          class="bg-orange-500/10 p-4 rounded-2xl border-2 border-orange-500/30 backdrop-blur-sm flex flex-row gap-4 items-center justify-center min-h-67.5 relative">
+          <span
+            class="absolute -top-3 left-4 bg-orange-600 text-[10px] font-black px-2 py-0.5 rounded uppercase text-white shadow-lg">
+            Class Skill
+          </span>
+          <GameCard v-for="card in signatureCards" :key="card.id" :id="card.id" :name="card.name" />
+        </div>
+
+        <div
+          class="bg-slate-900/50 p-4 rounded-2xl border border-slate-800 backdrop-blur-sm w-150 shrink-0 flex flex-row gap-4 items-center justify-center min-h-67.5 relative">
+          <span
+            class="absolute -top-3 left-4 bg-slate-800 text-[10px] font-black px-2 py-0.5 rounded uppercase text-slate-400">
+            Inventory
+          </span>
+          <GameCard v-for="card in inventoryCards" :key="card.id" :id="card.id" :name="card.name" />
+        </div>
       </div>
     </div>
 

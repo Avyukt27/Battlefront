@@ -91,13 +91,14 @@ export const useGameStore = defineStore('game', () => {
     }
   }
 
-  async function useCard(targetX: number, targetY: number) {
+  async function useCard(targetX: number, targetY: number, use_ability: boolean) {
     if (!selectedCardId.value || !gameId.value) return;
     try {
       const data = await gameApi.useCard(gameId.value, {
         card_id: selectedCardId.value,
         attacker_id: myPlayerId.value!,
         target_pos: [targetX, targetY],
+        use_ability,
       });
       gameState.value = data[0];
       selectedCardId.value = null;

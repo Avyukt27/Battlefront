@@ -12,6 +12,7 @@ pub struct UseCardRequest {
     pub card_id: String,
     pub attacker_id: u32,
     pub target_pos: (u8, u8),
+    pub use_ability: bool,
 }
 
 #[derive(Deserialize)]

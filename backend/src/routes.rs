@@ -183,19 +183,24 @@ pub async fn use_card_handler(
         .lock()
         .unwrap();
 
-    let attacker_colour = game
+    let attacker = game
         .players
         .iter()
         .find(|p| p.id == payload.attacker_id)
-        .ok_or((StatusCode::NOT_FOUND, "Player not found".to_string()))?
-        .colour
-        .clone();
+        .ok_or((StatusCode::NOT_FOUND, "Player not found".to_string()))?;
+
+    let attacker_colour = attacker.colour.clone();
 
     if game.current_turn != attacker_colour {
         return Err((StatusCode::FORBIDDEN, "Not your turn!".to_string()));
     }
 
-    match game.use_card(&payload.card_id, payload.attacker_id, payload.target_pos) {
+    match game.use_card(
+        &payload.card_id,
+        payload.attacker_id,
+        payload.target_pos,
+        payload.use_ability,
+    ) {
         Ok(h) => Ok(Json((game.clone(), h))),
         Err(e) => Err((StatusCode::FORBIDDEN, e)),
     }
