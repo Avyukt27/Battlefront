@@ -6,7 +6,7 @@ const store = useGameStore();
 
 <template>
   <aside class="flex flex-col gap-2 p-4 bg-slate-900/80 border-r border-slate-800 w-64">
-    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Combatants</h3>
+    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">Players</h3>
 
     <div v-for="player in store.gameState?.players" :key="player.id" :class="[
       'p-3 rounded-lg border transition-all',
