@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="240.95074"
+   height="337.27783"
+   viewBox="0 0 240.95078 337.27784"
+   sodipodi:docname="Staff.svg"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#505050"
+     inkscape:zoom="2.5765109"
+     inkscape:cx="120.51181"
+     inkscape:cy="168.63892"
+     inkscape:window-width="1908"
+     inkscape:window-height="1020"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g1" />
+  <defs
+     id="defs1">
+    <symbol
+       id="Range"
+       style="stroke-width:1.5;stroke-dasharray:none">
+      <title
+         id="title1-4">Range_inkscape_duplicate</title>
+      <g
+         id="Range_transform"
+         transform="matrix(1.534248,0,0,1.534248,9.0976184,-577.8888)">
+        <path
+           style="fill:#005ae6;fill-opacity:1;stroke:#acacac;stroke-width:1.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+           d="m 17.1875,378.0625 18.625,27.0625"
+           id="path116" />
+        <path
+           style="fill:none;fill-opacity:1;stroke:#8f6218;stroke-width:1.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+           d="m 36.3125,404.9375 c 0,0 5.120521,-29.09695 -18.8125,-27.3125"
+           id="path117" />
+      </g>
+    </symbol>
+  </defs>
+  <g
+     id="g1"
+     transform="translate(-494.30163,-356.64757)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.448;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect20"
+       width="239.50278"
+       height="335.8298"
+       x="495.02563"
+       y="357.37158"
+       rx="17.33494"
+       ry="14.657856" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;inline-size:136.983;display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.335667;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="32.194382"
+       y="40.746014"
+       id="text85"
+       transform="matrix(3.5958254,0,0,3.5958254,458.36564,253.67076)"><tspan
+         x="32.194382"
+         y="40.746014"
+         id="tspan2">Staff</tspan></text>
+    <g
+       id="g85"
+       transform="translate(484.23474,340)"
+       style="fill:#aeaeae;fill-opacity:1">
+      <rect
+         style="fill:#aeaeae;fill-opacity:1;stroke:#97a300;stroke-width:3.32576;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect85"
+         width="204.05365"
+         height="114.06127"
+         x="28.515463"
+         y="74.045197"
+         rx="17.324856"
+         ry="15.772744" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:23.3205px;font-family:FreeSans;-inkscape-font-specification:FreeSans;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.043;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="591.78101"
+       y="564.11682"
+       id="text86"><tspan
+         id="tspan86"
+         x="591.78101"
+         y="564.11682"
+         style="fill:#000000;fill-opacity:1;stroke-width:1.043;stroke-dasharray:none">Stats</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.266167;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="509.24646"
+       y="583.98779"
+       id="text88"><tspan
+         x="509.24646"
+         y="583.98779"
+         id="tspan87"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none">Attack Power: 2</tspan><tspan
+         x="509.24646"
+         y="605.21344"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none"
+         id="tspan88" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.42918px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4a4a4a;fill-opacity:1;stroke:#4a4a4a;stroke-width:0.190682;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="600.54803"
+       y="539.64288"
+       id="text89"><tspan
+         id="tspan89"
+         x="600.54803"
+         y="539.64288"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.42918px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4a4a4a;fill-opacity:1;stroke:#4a4a4a;stroke-width:0.190682;stroke-opacity:1">Fireblast!</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:23.3205px;font-family:FreeSans;-inkscape-font-specification:FreeSans;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.043;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="550.13892"
+       y="608.11682"
+       id="text105"><tspan
+         x="550.13892"
+         y="608.11682"
+         style="fill:#000000;fill-opacity:1;stroke-width:1.043;stroke-dasharray:none"
+         id="tspan105">Specifications</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.266167;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="509.24646"
+       y="623.98779"
+       id="text110"><tspan
+         x="509.24646"
+         y="623.98779"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none"
+         id="tspan110">Ability: Roll D6</tspan><tspan
+         x="509.24646"
+         y="645.21344"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none"
+         id="tspan114">              &gt;3, Double Damage</tspan><tspan
+         x="509.24646"
+         y="666.43903"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none"
+         id="tspan84">              &lt;4, Half Damage</tspan></text>
+    <g
+       id="g110"
+       transform="translate(-2.0211625)">
+      <rect
+         style="fill:#d1d500;fill-opacity:1;stroke:#000000;stroke-width:4.13789;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+         id="rect26-9"
+         width="10.262997"
+         height="78.654861"
+         x="757.7326"
+         y="105.20263"
+         rx="0"
+         ry="0"
+         transform="rotate(27.290351)" />
+      <path
+         style="fill:#00b3d5;fill-opacity:1;stroke:#000000;stroke-width:6.1677;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+         id="path26-3"
+         d="m 644.19165,437.47821 a 12.130859,12.130859 0 0 1 -12.11692,12.13085 12.130859,12.130859 0 0 1 -12.14477,-12.10297 12.130859,12.130859 0 0 1 12.08901,-12.15867 12.130859,12.130859 0 0 1 12.17255,12.07503" />
+    </g>
+    <use
+       xlink:href="#Range"
+       id="use1-0"
+       transform="matrix(0.69198126,0,0,0.69198126,677.33842,651.94354)" />
+  </g>
+</svg>

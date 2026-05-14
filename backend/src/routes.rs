@@ -25,7 +25,7 @@ pub fn create_routes(state: Arc<ServerState>) -> Router {
         .route("/api/create", post(create_game_handler))
         .route("/api/draw/{game_id}", post(draw_card_handler))
         .route("/api/use/{game_id}", post(use_card_handler))
-        .route("/api/end_turn/{game_id}", post(end_turn_handler))
+        .route("/api/end/{game_id}", post(end_turn_handler))
         .layer(CorsLayer::permissive())
         .with_state(state)
 }
@@ -89,7 +89,7 @@ pub async fn join_game_handler(
         .unwrap();
 
     match game.add_player() {
-        Ok(new_player) => Ok(Json(json![{"player_id": new_player.id, "state": *game}])),
+        Ok(new_player) => Ok(Json(json![{"playerId": new_player.id, "state": *game}])),
         Err(e) => Err((StatusCode::NOT_ACCEPTABLE, e)),
     }
 }
@@ -135,7 +135,7 @@ pub async fn create_game_handler(State(state): State<Arc<ServerState>>) -> Json<
     let mut new_game = GameState::new(8, 8);
     new_game.initialise_deck();
     games.insert(game_id.clone(), Arc::new(Mutex::new(new_game)));
-    Json(json!({ "game_id": game_id }))
+    Json(json!({ "gameId": game_id }))
 }
 
 pub async fn draw_card_handler(
@@ -154,7 +154,10 @@ pub async fn draw_card_handler(
         .players
         .iter()
         .find(|p| p.id == payload.player_id)
-        .map(|p| p.cards.len() < 3)
+        .map(|p| {
+            let inventory_count = p.cards.iter().filter(|c| !c.is_signature).count();
+            inventory_count < 3
+        })
         .unwrap_or(false);
 
     if !can_draw {
@@ -183,19 +186,24 @@ pub async fn use_card_handler(
         .lock()
         .unwrap();
 
-    let attacker_colour = game
+    let attacker = game
         .players
         .iter()
         .find(|p| p.id == payload.attacker_id)
-        .ok_or((StatusCode::NOT_FOUND, "Player not found".to_string()))?
-        .colour
-        .clone();
+        .ok_or((StatusCode::NOT_FOUND, "Player not found".to_string()))?;
+
+    let attacker_colour = attacker.colour.clone();
 
     if game.current_turn != attacker_colour {
         return Err((StatusCode::FORBIDDEN, "Not your turn!".to_string()));
     }
 
-    match game.use_card(&payload.card_id, payload.attacker_id, payload.target_pos) {
+    match game.use_card(
+        &payload.card_id,
+        payload.attacker_id,
+        payload.target_pos,
+        payload.use_ability,
+    ) {
         Ok(h) => Ok(Json((game.clone(), h))),
         Err(e) => Err((StatusCode::FORBIDDEN, e)),
     }

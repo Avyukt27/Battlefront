@@ -2,15 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::card::Card;
 
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub enum PlayerColour {
-    Red,
-    Blue,
-    Green,
-    Yellow,
-}
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Player {
     pub id: u32,
     pub colour: PlayerColour,
@@ -20,29 +13,59 @@ pub struct Player {
     pub max_health: i32,
     pub shield: i32,
     pub status_effects: Vec<ActiveEffect>,
-    pub class: String,
+    pub class: PlayerClass,
     pub cards: Vec<Card>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy, PartialEq)]
+#[serde(rename_all = "PascalCase")]
 pub enum Status {
-    Bleed,
+    Fracture,
     Poison,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub enum CardEffect {
-    Damage { power: i32 },
-    Heal { amount: i32 },
-    SkillCheck { threshold: u8 },
-    ApplyStatus { status: Status, duration: u8 },
-    CureStatus { status: Status },
-    Range { max_range: u8 },
-    Shield { value: i32 },
+#[serde(rename_all = "camelCase")]
+pub struct ActiveEffect {
+    pub status: Status,
+    pub duration: u8,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(rename_all = "PascalCase")]
+pub enum PlayerColour {
+    Red,
+    Blue,
+    Green,
+    Yellow,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+#[serde(rename_all = "PascalCase")]
+pub enum PlayerClass {
+    Gunslinger,
+    Arsenist,
+    Mage,
+    Knight,
+    Assassin,
+}
+
+impl PlayerClass {
+    pub fn get_signature_cards(&self) -> Vec<Card> {
+        match self {
+            Self::Gunslinger => vec![Card::create_revolver()],
+            Self::Mage => vec![Card::create_staff()],
+            Self::Knight => vec![Card::create_royal_sword(), Card::create_royal_shield()],
+            Self::Assassin => vec![Card::create_dagger()],
+            Self::Arsenist => vec![Card::create_fire_drink()],
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ActiveEffect {
-    pub status: Status,
+#[serde(rename_all = "camelCase")]
+pub struct FireTile {
+    pub x: u8,
+    pub y: u8,
     pub duration: u8,
 }

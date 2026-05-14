@@ -1,11 +1,14 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::{CardEffect, Status};
+use crate::models::Status;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct Card {
     pub id: String,
     pub name: String,
+    pub is_signature: bool,
+    pub cooldown: u8,
     pub effects: Vec<CardEffect>,
 }
 
@@ -14,6 +17,8 @@ impl Card {
         Self {
             id: "".to_string(),
             name: "Stone".to_string(),
+            is_signature: false,
+            cooldown: 0,
             effects: vec![
                 CardEffect::SkillCheck { threshold: 5 },
                 CardEffect::Damage { power: 1 },
@@ -26,6 +31,8 @@ impl Card {
         Self {
             id: "".to_string(),
             name: "Stick".to_string(),
+            is_signature: false,
+            cooldown: 0,
             effects: vec![
                 CardEffect::Damage { power: 1 },
                 CardEffect::Range { max_range: 1 },
@@ -37,10 +44,12 @@ impl Card {
         Self {
             id: "".to_string(),
             name: "Bandage".to_string(),
+            is_signature: false,
+            cooldown: 0,
             effects: vec![
                 CardEffect::Heal { amount: 2 },
                 CardEffect::CureStatus {
-                    status: Status::Bleed,
+                    status: Status::Fracture,
                 },
                 CardEffect::Range { max_range: 0 },
             ],
@@ -51,10 +60,203 @@ impl Card {
         Self {
             id: "".to_string(),
             name: "Shield".to_string(),
+            is_signature: false,
+            cooldown: 0,
             effects: vec![
                 CardEffect::Shield { value: 1 },
                 CardEffect::Range { max_range: 0 },
             ],
         }
     }
+
+    pub fn create_sword() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Sword".to_string(),
+            is_signature: false,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 1 },
+            ],
+        }
+    }
+
+    pub fn create_poison_bomb() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Poison Bomb".to_string(),
+            is_signature: false,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Range { max_range: 2 },
+                CardEffect::ApplyStatus {
+                    status: Status::Poison,
+                    duration: 2,
+                },
+            ],
+        }
+    }
+
+    pub fn create_antidote() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Antidote".to_string(),
+            is_signature: false,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::CureStatus {
+                    status: Status::Poison,
+                },
+                CardEffect::Range { max_range: 0 },
+            ],
+        }
+    }
+
+    pub fn create_spiked_bat() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Spiked Bat".to_string(),
+            is_signature: false,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 1 },
+                CardEffect::ApplyStatus {
+                    status: Status::Fracture,
+                    duration: 3,
+                },
+            ],
+        }
+    }
+
+    pub fn create_fangs() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Fangs".to_string(),
+            is_signature: false,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::LifeSteal,
+                CardEffect::Range { max_range: 1 },
+            ],
+        }
+    }
+
+    pub fn create_revolver() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Revolver".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 5 },
+                CardEffect::Ability {
+                    ability: CardAbility::DamageMul {
+                        multiplier: 3.0,
+                        threshold: 0,
+                    },
+                    cooldown: 3,
+                },
+                CardEffect::SkillCheck { threshold: 4 },
+            ],
+        }
+    }
+
+    pub fn create_staff() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Staff".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 5 },
+                CardEffect::Ability {
+                    ability: CardAbility::DamageMul {
+                        multiplier: 2.0,
+                        threshold: 4,
+                    },
+                    cooldown: 2,
+                },
+            ],
+        }
+    }
+
+    pub fn create_royal_sword() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Royal Sword".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 1 },
+            ],
+        }
+    }
+
+    pub fn create_royal_shield() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Royal Shield".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Shield { value: 2 },
+                CardEffect::Range { max_range: 0 },
+            ],
+        }
+    }
+
+    pub fn create_dagger() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Dagger".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![
+                CardEffect::Damage { power: 2 },
+                CardEffect::Range { max_range: 1 },
+                CardEffect::Ability {
+                    ability: CardAbility::ShieldPierce,
+                    cooldown: 2,
+                },
+            ],
+        }
+    }
+
+    pub fn create_fire_drink() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Fire Drink".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![CardEffect::Range { max_range: 3 }, CardEffect::Ignite],
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub enum CardEffect {
+    Damage { power: i32 },
+    Heal { amount: i32 },
+    SkillCheck { threshold: u8 },
+    ApplyStatus { status: Status, duration: u8 },
+    CureStatus { status: Status },
+    Range { max_range: u8 },
+    Shield { value: i32 },
+    Ability { ability: CardAbility, cooldown: u8 },
+    Ignite,
+    LifeSteal,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "PascalCase")]
+pub enum CardAbility {
+    DamageMul { multiplier: f32, threshold: u8 },
+    ShieldPierce,
 }

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="240.95078"
+   height="337.27777"
+   viewBox="0 0 240.95081 337.27778"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient191">
+      <stop
+         style="stop-color:#9b9b9b;stop-opacity:1;"
+         offset="0"
+         id="stop192" />
+      <stop
+         style="stop-color:#474747;stop-opacity:1;"
+         offset="0.30000001"
+         id="stop194" />
+      <stop
+         style="stop-color:#474747;stop-opacity:1;"
+         offset="0.69999999"
+         id="stop195" />
+      <stop
+         style="stop-color:#9b9b9b;stop-opacity:1;"
+         offset="1"
+         id="stop193" />
+    </linearGradient>
+    <linearGradient
+       xlink:href="#linearGradient191"
+       id="linearGradient193"
+       x1="359.24106"
+       y1="1136.0996"
+       x2="384.31793"
+       y2="1136.0996"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="rotate(27.062476,369.26226,1135.1503)" />
+  </defs>
+  <g
+     id="g1"
+     transform="translate(-252.30167,-1032.6476)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.448;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect7"
+       width="239.50278"
+       height="335.8298"
+       x="253.02567"
+       y="1033.3716"
+       rx="17.33494"
+       ry="14.657856" />
+    <text
+       xml:space="preserve"
+       style="font-size:23.3205px;font-family:FreeSans;-inkscape-font-specification:FreeSans;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.043;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="306.09692"
+       y="1288.1526"
+       id="text135"><tspan
+         x="306.09692"
+         y="1288.1526"
+         style="fill:#000000;fill-opacity:1;stroke-width:1.043;stroke-dasharray:none"
+         id="tspan135">Specifications</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;white-space:pre;inline-size:226.148;display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.266167;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="25.246489"
+       y="623.98779"
+       id="text140"
+       transform="translate(236.77632,680.03555)"><tspan
+         x="25.246489"
+         y="623.98779"
+         id="tspan1">Gives target fracture for 3 </tspan><tspan
+         x="25.246489"
+         y="645.21343"
+         id="tspan2">turns
+</tspan><tspan
+         x="25.246489"
+         y="666.43908"
+         id="tspan3">
+</tspan><tspan
+         x="25.246489"
+         y="687.66473"
+         id="tspan4">
+</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;inline-size:136.983;display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.335667;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="32.194382"
+       y="40.746014"
+       id="text151"
+       transform="matrix(3.5958254,0,0,3.5958254,153.03863,930.58066)"><tspan
+         x="32.194382"
+         y="40.746014"
+         id="tspan5">Spiked Bat</tspan></text>
+    <g
+       id="g151"
+       transform="translate(240.19272,1014.7886)"
+       style="fill:#aeaeae;fill-opacity:1;stroke:#00a30e">
+      <rect
+         style="fill:#aeaeae;fill-opacity:1;stroke:#00a30e;stroke-width:3.32576;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect151"
+         width="204.05365"
+         height="114.06127"
+         x="28.515463"
+         y="74.045197"
+         rx="17.324856"
+         ry="15.772744" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:23.3205px;font-family:FreeSans;-inkscape-font-specification:FreeSans;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.043;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="347.73911"
+       y="1238.9054"
+       id="text152"><tspan
+         id="tspan152"
+         x="347.73911"
+         y="1238.9054"
+         style="fill:#000000;fill-opacity:1;stroke-width:1.043;stroke-dasharray:none">Stats</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.266167;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="265.20444"
+       y="1258.7764"
+       id="text154"><tspan
+         x="265.20444"
+         y="1258.7764"
+         id="tspan153"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none">Attack Power: 2</tspan><tspan
+         x="265.20444"
+         y="1280.002"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;stroke-width:0.266167;stroke-dasharray:none"
+         id="tspan154" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.42918px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4a4a4a;fill-opacity:1;stroke:#4a4a4a;stroke-width:0.190682;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="348.34201"
+       y="1214.4315"
+       id="text155"><tspan
+         id="tspan155"
+         x="348.34201"
+         y="1214.4315"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.42918px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4a4a4a;fill-opacity:1;stroke:#4a4a4a;stroke-width:0.190682;stroke-opacity:1">Smash or Smash</tspan></text>
+    <g
+       id="g162"
+       transform="matrix(1.2738931,0,0,1.2738931,-135.02798,489.41175)">
+      <rect
+         style="fill:#9e6e00;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+         id="rect161"
+         width="3.7666349"
+         height="7.1687565"
+         x="-780.11847"
+         y="265.30731"
+         rx="0"
+         ry="0"
+         transform="matrix(-0.80639253,-0.59138066,-0.59138066,0.80639253,0,0)" />
+      <rect
+         style="fill:#9e6e00;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+         id="rect162"
+         width="7.4246211"
+         height="2.9610097"
+         x="-772.29492"
+         y="289.00778"
+         transform="matrix(-0.82612099,-0.56349277,-0.56349277,0.82612099,0,0)" />
+      <path
+         style="fill:#cfcfcf;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+         d="m 473.87927,672.73733 8.79511,-13.15624 -0.64517,-2.4078 -2.5258,0.67679 -8.74914,12.77788 z"
+         id="path162" />
+    </g>
+    <path
+       d="m 389.74968,1100.0282 -12.07543,7.8719 12.85453,6.5214 z"
+       style="fill:#b2b2b2;stroke:#000000;stroke-width:2.537;stroke-linecap:round"
+       id="path181" />
+    <path
+       d="m 357.22,1109.9041 8.56282,11.5957 5.76054,-13.213 z"
+       style="fill:#b2b2b2;stroke:#000000;stroke-width:2.537;stroke-linecap:round"
+       id="path182" />
+    <path
+       d="m 400.93296,1132.3331 -14.4104,-0.353 7.51073,-12.3027 z"
+       style="fill:#b2b2b2;stroke:#000000;stroke-width:2.537;stroke-linecap:round"
+       id="path183" />
+    <path
+       d="m 349.55275,1126.7893 8.37447,11.7325 5.97313,-13.1183 z"
+       style="fill:#b2b2b2;stroke:#000000;stroke-width:2.537;stroke-linecap:round"
+       id="path184" />
+    <path
+       d="m 391.51995,1148.2303 -14.41444,0.09 7.12941,-12.5276 z"
+       style="fill:#b2b2b2;stroke:#000000;stroke-width:2.537;stroke-linecap:round"
+       id="path185" />
+    <path
+       d="m 373.0918,1106.1973 c 0,0 -14.99734,31.7639 -23.23192,51.1689 -2.96182,6.9795 -0.92688,14.0997 -2.79193,15.1254 0.72987,10.0537 -5.06837,11.362 -7.1821,14.0865 -1.88997,2.4362 7.3762,7.1691 8.23723,4.2084 0.93232,-3.2057 -0.59376,-8.413 7.28264,-14.0351 -0.38405,-2.1588 7.31423,-4.6328 11.03471,-10.7739 10.88603,-17.9687 28.1349,-48.8043 28.1349,-48.8043 z"
+       style="fill:#9e6e00;stroke:#000000;stroke-width:2.537;stroke-linecap:round"
+       id="path176" />
+    <path
+       d="m 341.94289,1143.3146 8.90501,11.3351 5.36369,-13.379 z"
+       style="fill:#b2b2b2;stroke:#000000;stroke-width:2.537;stroke-linecap:round"
+       id="path186" />
+    <path
+       d="m 382.92733,1164.2536 -14.40332,-0.5731 7.69781,-12.1866 z"
+       style="fill:#b2b2b2;stroke:#000000;stroke-width:2.537;stroke-linecap:round"
+       id="path187" />
+    <path
+       style="fill:url(#linearGradient193);stroke:#000000;stroke-width:2.537;stroke-linecap:round;stroke-opacity:1"
+       d="m 363.97502,1126.3191 19.99254,10.2142 -6.3819,11.1315 -19.20543,-9.812 z"
+       id="path188" />
+  </g>
+</svg>

@@ -9,7 +9,6 @@ const handleCreate = async () => {
   await store.createGame();
 
   if (store.gameId) {
-    console.log(store.gameId);
     await store.joinGame(store.gameId);
   }
 };

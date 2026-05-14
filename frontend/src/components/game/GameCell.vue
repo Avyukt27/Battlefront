@@ -8,7 +8,7 @@ const player = computed(() =>
   store.gameState?.players.find((p) => p.x === props.x && p.y === props.y),
 );
 const myPlayer = computed(() => store.gameState?.players.find((p) => p.id === store.myPlayerId));
-const isCurrentTurn = computed(() => store.gameState?.current_turn === player.value?.colour);
+const isCurrentTurn = computed(() => store.gameState?.currentTurn === player.value?.colour);
 
 const colorMap: Record<string, string> = {
   Red: 'bg-red-600 border-red-400',
@@ -19,13 +19,13 @@ const colorMap: Record<string, string> = {
 
 const isReachable = computed(() => {
   const state = store.gameState;
-  if (!state || !myPlayer.value || state.last_roll === 0) return false;
-  if (state.current_turn !== myPlayer.value.colour) return false;
+  if (!state || !myPlayer.value || state.lastRoll === 0) return false;
+  if (state.currentTurn !== myPlayer.value.colour) return false;
 
   const dx = Math.abs(myPlayer.value.x - props.x);
   const dy = Math.abs(myPlayer.value.y - props.y);
   const distance = dx + dy;
-  return distance > 0 && distance <= state.last_roll;
+  return distance > 0 && distance <= state.lastRoll;
 });
 
 const isTargetable = computed(() => {
@@ -34,7 +34,10 @@ const isTargetable = computed(() => {
   const card = myPlayer.value.cards.find((c) => c.id === store.selectedCardId);
   if (!card) return false;
 
-  const rangeEffect = card.effects.find((e) => 'Range' in e);
+  const rangeEffect = card.effects.find(
+    (e): e is { Range: { max_range: number } } =>
+      typeof e === 'object' && e !== null && 'Range' in e,
+  );
   if (rangeEffect && 'Range' in rangeEffect) {
     const range = rangeEffect.Range.max_range;
     const startX = myPlayer.value.x;
@@ -45,6 +48,12 @@ const isTargetable = computed(() => {
     return dist <= range;
   }
 
+  return false;
+});
+
+const isOnFire = computed(() => {
+  if (!store.gameId || !store.gameState) return false;
+  if (store.gameState.fireTiles.find((t) => t.x === props.x && t.y === props.y)) return true;
   return false;
 });
 
@@ -75,6 +84,10 @@ const handleMove = () => {
     <div v-if="player" class="w-4/5 h-4/5 rounded-full shadow-2xl transition-all duration-500 transform scale-90 z-10"
       :class="colorMap[player.colour]">
       <div v-if="isCurrentTurn" class="absolute inset-0 rounded-full animate-ping bg-white/30"></div>
+    </div>
+    <div v-if="isOnFire"
+      class="absolute inset-0 bg-orange-600/40 animate-pulse border-2 border-orange-500 shadow-[inset_0_0_15px_rgba(255,100,0,1)]">
+      <span class="absolute bottom-1 right-1 text-[8px]">🔥</span>
     </div>
 
     <span class="absolute bottom-0.5 right-1 text-[8px] text-slate-700 select-none">

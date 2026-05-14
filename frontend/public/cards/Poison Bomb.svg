@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   id="svg1"
+   width="240.95081"
+   height="341.8692"
+   viewBox="0 0 240.95084 341.86921"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1">
+    <symbol
+       id="use6">
+      <g
+         id="g18"
+         transform="matrix(10.653152,0,0,10.653152,-989.29585,-9.7619404)">
+        <title
+           id="title12">Status</title>
+        <rect
+           style="fill:#d5d5d5;fill-opacity:1;stroke:#000000;stroke-width:0.104793;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+           id="rect13-2"
+           width="0.89566296"
+           height="2.0366786"
+           x="93.149605"
+           y="-48.487698"
+           transform="rotate(28.375265)" />
+        <rect
+           style="fill:#d5d5d5;fill-opacity:1;stroke:#000000;stroke-width:0.132292;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+           id="rect14-0"
+           width="1.4965495"
+           height="0.59531248"
+           x="92.262787"
+           y="-50.113197"
+           transform="rotate(29.061673)" />
+        <rect
+           style="fill:#d50707;fill-opacity:1;stroke:#000000;stroke-width:0.132292;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+           id="rect15-6"
+           width="2.3743742"
+           height="1.3802288"
+           x="94.114525"
+           y="-42.869572"
+           transform="rotate(26.233166)"
+           ry="0.21852265" />
+        <rect
+           style="fill:#d50707;fill-opacity:1;stroke:#000000;stroke-width:0.132292;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+           id="rect16-3"
+           width="0.082682289"
+           height="0.11575521"
+           x="49.070835"
+           y="92.704094"
+           ry="0"
+           transform="rotate(-60.273377)" />
+        <rect
+           style="fill:#d50707;fill-opacity:1;stroke:#000000;stroke-width:0.132292;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+           id="rect17-3"
+           width="0.082682289"
+           height="0.11575521"
+           x="49.507717"
+           y="92.702179"
+           ry="0"
+           transform="rotate(-60.273377)" />
+        <rect
+           style="fill:#d50707;fill-opacity:1;stroke:#000000;stroke-width:0.132292;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+           id="rect18-7"
+           width="0.082682289"
+           height="0.11575521"
+           x="49.933319"
+           y="92.697189"
+           ry="0"
+           transform="rotate(-60.273377)" />
+      </g>
+      <title
+         id="title18">Status</title>
+    </symbol>
+  </defs>
+  <g
+     id="g1"
+     transform="translate(-978.30163,-694.64763)">
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.448;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect4"
+       width="239.50278"
+       height="335.8298"
+       x="979.02563"
+       y="695.37164"
+       rx="17.33494"
+       ry="14.657856" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.448;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect10"
+       width="239.50278"
+       height="335.8298"
+       x="979.02563"
+       y="1033.3716"
+       rx="17.33494"
+       ry="14.657856" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.7532px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;white-space:pre;inline-size:136.983;display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.335667;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="32.194382"
+       y="40.746014"
+       id="text198"
+       transform="matrix(3.5958254,0,0,3.5958254,870.00495,590.54576)"><tspan
+         x="32.194382"
+         y="40.746014"
+         id="tspan1">Poison Bomb</tspan></text>
+    <g
+       id="g198"
+       transform="translate(966.19269,676.875)"
+       style="fill:#aeaeae;fill-opacity:1;stroke:#003da3">
+      <rect
+         style="fill:#aeaeae;fill-opacity:1;stroke:#003da3;stroke-width:3.32576;stroke-linecap:square;stroke-linejoin:bevel;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         id="rect198"
+         width="204.05365"
+         height="114.06127"
+         x="28.515463"
+         y="74.045197"
+         rx="17.324856"
+         ry="15.772744" />
+    </g>
+    <path
+       style="fill:none;fill-opacity:1;stroke:#e7e7e7;stroke-width:2.537;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       d="m 1096.7661,797.32567 c 0,0 -2.5536,-7.60256 4.6972,-9.0588 7.2508,-1.45625 5.1722,-8.76418 5.1722,-8.76418"
+       id="path214" />
+    <text
+       xml:space="preserve"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.42918px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4a4a4a;fill-opacity:1;stroke:#4a4a4a;stroke-width:0.190682;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="1070.9686"
+       y="876.51788"
+       id="text202"><tspan
+         id="tspan202"
+         x="1070.9686"
+         y="876.51788"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.42918px;font-family:FreeSans;-inkscape-font-specification:FreeSans;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#4a4a4a;fill-opacity:1;stroke:#4a4a4a;stroke-width:0.190682;stroke-opacity:1">Did someone fart?</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.537;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+       id="rect213"
+       width="27.046835"
+       height="8.7504463"
+       x="1083.3278"
+       y="795.03589" />
+    <path
+       d="m 1096.735,799.15061 a 18.665167,18.665167 0 0 0 -18.666,18.66602 18.665167,18.665167 0 0 0 18.666,18.66602 18.665167,18.665167 0 0 0 18.666,-18.66602 18.665167,18.665167 0 0 0 -18.666,-18.66602 z"
+       style="fill:#00780a;stroke:#000000;stroke-width:2.36966;stroke-opacity:1"
+       id="path205" />
+    <g
+       id="g213"
+       transform="translate(-4.4052222,-1.7837976)">
+      <path
+         d="m 1101.1402,810.93046 c -3.7969,0 -6.875,3.07807 -6.875,6.875 0.01,2.37732 1.2453,4.58139 3.2695,5.82812 v 4.63672 h 3.1641 v -3.625 c 0.1467,0.0165 0.2939,0.0282 0.4414,0.0352 0.1318,-0.007 0.2633,-0.0171 0.3945,-0.0312 v 3.62109 h 3.1641 v -4.60742 c 2.051,-1.24077 3.3077,-3.46031 3.3164,-5.85742 0,-3.79693 -3.0781,-6.875 -6.875,-6.875 z"
+         style="fill:#750083;fill-opacity:1;stroke:#000000;stroke-width:1.825;stroke-opacity:1"
+         id="path207" />
+      <circle
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.46536;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+         id="circle212"
+         cx="1103.7919"
+         cy="816.97131"
+         r="1.5775778" />
+      <circle
+         style="fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:1.46536;stroke-linecap:round;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"
+         id="circle213"
+         cx="1098.4885"
+         cy="816.97131"
+         r="1.5775778" />
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:23.3205px;font-family:FreeSans;-inkscape-font-specification:FreeSans;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.043;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="1034.1389"
+       y="912.61682"
+       id="text214"><tspan
+         x="1034.1389"
+         y="912.61682"
+         style="fill:#000000;fill-opacity:1;stroke-width:1.043;stroke-dasharray:none"
+         id="tspan214">Specifications</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.9805px;font-family:FreeSans;-inkscape-font-specification:FreeSans;white-space:pre;inline-size:225.082;display:inline;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.266167;stroke-linecap:square;stroke-dasharray:none;stroke-opacity:1"
+       x="25.246489"
+       y="623.98779"
+       id="text215"
+       transform="translate(965.57872,306.26775)"><tspan
+         x="25.246489"
+         y="623.98779"
+         id="tspan2">Can be used 2 tiles away
+</tspan><tspan
+         x="25.246489"
+         y="645.21343"
+         id="tspan3">Gives everyone (including </tspan><tspan
+         x="25.246489"
+         y="666.43908"
+         id="tspan4">user) in a 1 tile radius poison </tspan><tspan
+         x="25.246489"
+         y="687.66473"
+         id="tspan5">for 2 turns
+</tspan><tspan
+         x="25.246489"
+         y="708.89037"
+         id="tspan6">
+</tspan><tspan
+         x="25.246489"
+         y="730.11602"
+         id="tspan7">
+</tspan></text>
+    <use
+       xlink:href="#use6"
+       id="use5"
+       transform="matrix(0.64740133,0,0,0.64740133,1113.693,988.39496)" />
+  </g>
+</svg>

@@ -2,18 +2,21 @@ use rand::seq::SliceRandom;
 use serde::Serialize;
 
 use crate::{
-    card::Card,
-    models::{ActiveEffect, CardEffect, Player, PlayerColour, Status},
+    card::{Card, CardAbility, CardEffect},
+    models::{ActiveEffect, FireTile, Player, PlayerClass, PlayerColour, Status},
 };
 
 #[derive(Debug, Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
 pub struct GameState {
     pub players: Vec<Player>,
     pub current_turn: PlayerColour,
     pub last_roll: i16,
     pub width: u8,
     pub height: u8,
+    pub fire_tiles: Vec<FireTile>,
     pub deck: Vec<Card>,
+    pub last_message: String,
 }
 
 impl GameState {
@@ -24,7 +27,9 @@ impl GameState {
             last_roll: 0,
             width,
             height,
+            fire_tiles: Vec::new(),
             deck: Vec::new(),
+            last_message: "".to_string(),
         }
     }
 
@@ -35,7 +40,9 @@ impl GameState {
     pub fn roll_dice(&mut self) -> i16 {
         let modifier = if self.players.iter().any(|p| {
             p.colour == self.current_turn
-                && p.status_effects.iter().any(|e| e.status == Status::Bleed)
+                && p.status_effects
+                    .iter()
+                    .any(|e| e.status == Status::Fracture)
         }) {
             -1i16
         } else {
@@ -43,7 +50,7 @@ impl GameState {
         };
 
         self.last_roll = rand::random_range(1..=6);
-        (self.last_roll + modifier).max(0)
+        (self.last_roll + modifier).max(1)
     }
 
     pub fn try_move(&mut self, player_id: u32, target_x: u8, target_y: u8) -> Result<(), String> {
@@ -66,8 +73,8 @@ impl GameState {
         let dist =
             (current_x as i16 - target_x as i16).abs() + (current_y as i16 - target_y as i16).abs();
 
-        if dist > self.last_roll as i16 {
-            return Err("Destination is too far away!".to_string());
+        if dist > self.last_roll {
+            return Err("Destination is too far!".to_string());
         }
         if self
             .players
@@ -98,8 +105,29 @@ impl GameState {
                 }
                 effect.duration = effect.duration.saturating_sub(1);
             }
-
             player.status_effects.retain(|e| e.duration > 0);
+
+            for card in player.cards.iter_mut() {
+                card.cooldown = card.cooldown.saturating_sub(1);
+            }
+        }
+
+        self.fire_tiles.retain_mut(|tile| {
+            if tile.duration > 0 {
+                tile.duration -= 1;
+                true
+            } else {
+                false
+            }
+        });
+        for player in &mut self.players {
+            if self
+                .fire_tiles
+                .iter()
+                .any(|f| f.x == player.x && f.y == player.y)
+            {
+                player.health = player.health.saturating_sub(1);
+            }
         }
 
         if let Some(index) = self
@@ -134,11 +162,18 @@ impl GameState {
 
         let new_id = self.players.iter().map(|p| p.id).max().unwrap_or(0) + 1;
 
-        let classes = vec!["Gunslinger", "Mage", "Knight", "Assassin", "Arsenist"];
-        let taken_classes: Vec<String> = self.players.iter().map(|p| p.class.clone()).collect();
-        let available_classes: Vec<&&str> = classes
+        let classes = vec![
+            PlayerClass::Gunslinger,
+            PlayerClass::Mage,
+            PlayerClass::Knight,
+            PlayerClass::Assassin,
+            PlayerClass::Arsenist,
+        ];
+        let taken_classes: Vec<PlayerClass> =
+            self.players.iter().map(|p| p.class.clone()).collect();
+        let available_classes: Vec<&PlayerClass> = classes
             .iter()
-            .filter(|class| !taken_classes.contains(&class.to_string()))
+            .filter(|class| !taken_classes.contains(&class))
             .collect();
 
         if available_classes.is_empty() {
@@ -146,9 +181,15 @@ impl GameState {
         }
 
         let class_index = rand::random_range(0..available_classes.len());
-        let class = available_classes[class_index].to_string();
+        let given_class = available_classes[class_index];
 
-        let mut cards = Vec::new();
+        let mut cards: Vec<Card> = Vec::new();
+        let mut sig_cards = given_class.get_signature_cards();
+        for sig_card in sig_cards.iter_mut() {
+            sig_card.id = uuid::Uuid::new_v4().to_string();
+            cards.push(sig_card.clone());
+        }
+
         for _ in 0..3 {
             if let Some(mut card) = self.deck.pop() {
                 card.id = uuid::Uuid::new_v4().to_string();
@@ -165,7 +206,7 @@ impl GameState {
             max_health: 20,
             shield: 0,
             status_effects: Vec::new(),
-            class,
+            class: given_class.clone(),
             cards,
         };
 
@@ -178,8 +219,9 @@ impl GameState {
         card_id: &str,
         attacker_id: u32,
         target_pos: (u8, u8),
+        use_ability: bool,
     ) -> Result<bool, String> {
-        let (attacker_pos, card_effects, card_name) = {
+        let (attacker_pos, card_cooldown, card_effects, card_name) = {
             let attacker = self
                 .players
                 .iter()
@@ -194,10 +236,46 @@ impl GameState {
 
             (
                 (attacker.x, attacker.y),
+                card.cooldown,
                 card.effects.clone(),
                 card.name.clone(),
             )
         };
+
+        let mut damage_mod = 1.0;
+        let mut shield_bypass = false;
+        let mut life_stolen = 0;
+        let has_lifesteal = card_effects
+            .iter()
+            .any(|e| matches!(e, CardEffect::LifeSteal));
+
+        if card_cooldown > 0 {
+            return Err("Card is on cooldown".to_string());
+        }
+
+        if use_ability {
+            for effect in &card_effects {
+                if let CardEffect::Ability { ability, .. } = effect {
+                    match ability {
+                        CardAbility::DamageMul {
+                            multiplier,
+                            threshold,
+                        } => {
+                            let roll = rand::random_range(1..=6) as u8;
+                            if roll >= *threshold {
+                                damage_mod = *multiplier;
+                            } else {
+                                self.last_message = "Failed ability roll".to_string();
+                                damage_mod = 1.0 / *multiplier;
+                            };
+                        }
+                        CardAbility::ShieldPierce => {
+                            shield_bypass = true;
+                        }
+                    }
+                }
+            }
+        }
 
         let distance = (attacker_pos.0 as i16 - target_pos.0 as i16).abs()
             + (attacker_pos.1 as i16 - target_pos.1 as i16).abs();
@@ -208,49 +286,81 @@ impl GameState {
                     return Err("Out of range!".to_string());
                 }
             }
+            if let CardEffect::Ignite = effect {
+                let patterns = vec![
+                    (target_pos.0, target_pos.1),
+                    (target_pos.0, target_pos.1.saturating_add(1)),
+                    (target_pos.0, target_pos.1.saturating_sub(1)),
+                    (target_pos.0.saturating_add(1), target_pos.1),
+                    (target_pos.0.saturating_sub(1), target_pos.1),
+                ];
+
+                for (x, y) in patterns {
+                    self.fire_tiles.push(FireTile { x, y, duration: 2 });
+                }
+            }
         }
         if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
-            if let Some(idx) = attacker.cards.iter().position(|c| c.id == card_id) {
-                attacker.cards.remove(idx);
+            if let Some(card) = attacker.cards.iter_mut().find(|c| c.id == card_id) {
+                if card.is_signature {
+                    if use_ability {
+                        if let Some(CardEffect::Ability { cooldown, .. }) = card
+                            .effects
+                            .iter()
+                            .find(|e| matches!(e, CardEffect::Ability { .. }))
+                        {
+                            card.cooldown = *cooldown;
+                        }
+                    } else {
+                        card.cooldown = 1;
+                    }
+                } else {
+                    attacker.cards.retain(|c| c.id != card_id);
+                }
             }
         }
 
         let mut hit_landed = true;
         for effect in &card_effects {
             if let CardEffect::SkillCheck { threshold } = effect {
-                if distance > 1 {
-                    let roll = rand::random_range(1..=6) as u8;
-                    if roll < *threshold {
-                        hit_landed = false;
-                    }
+                if distance > 1 && rand::random_range(1..=6) < *threshold {
+                    hit_landed = false;
                 }
             }
         }
         if !hit_landed {
+            self.last_message = "Missed".to_string();
             return Ok(false);
         }
-
-        let radius = if card_name == "Poison Bomb" {
-            1i16
-        } else {
-            0i16
-        };
 
         for player in self.players.iter_mut() {
             let dx = (player.x as i16 - target_pos.0 as i16).abs();
             let dy = (player.y as i16 - target_pos.1 as i16).abs();
-            let dist_to_impact = dx.max(dy);
 
-            if dist_to_impact <= radius {
+            let is_in_hit_zone = match card_name.as_str() {
+                "Poison Bomb" => dx.max(dy) <= 1,
+                _ => dx == 0 && dy == 0,
+            };
+
+            if is_in_hit_zone {
                 for effect in &card_effects {
                     match effect {
                         CardEffect::Damage { power } => {
-                            if player.shield >= *power {
-                                player.shield -= *power;
+                            let final_dmg = (*power as f32 * damage_mod) as i32;
+                            let initial_health = player.health;
+                            if !shield_bypass {
+                                if player.shield >= final_dmg {
+                                    player.shield -= final_dmg;
+                                } else {
+                                    let overflow = final_dmg - player.shield;
+                                    player.shield = 0;
+                                    player.health = player.health.saturating_sub(overflow);
+                                }
                             } else {
-                                let overflow = power - player.shield;
-                                player.shield = 0;
-                                player.health = player.health.saturating_sub(overflow);
+                                player.health = player.health.saturating_sub(final_dmg);
+                            }
+                            if has_lifesteal && player.id != attacker_id {
+                                life_stolen += (initial_health - player.health).max(0);
                             }
                         }
                         CardEffect::ApplyStatus { status, duration } => {
@@ -282,11 +392,17 @@ impl GameState {
                             player.status_effects.retain(|e| e.status != *status);
                         }
                         CardEffect::Shield { value } => {
-                            player.shield = (player.shield + *value).min(5);
+                            player.shield = (player.shield + *value).min(10);
                         }
                         _ => {}
                     }
                 }
+            }
+        }
+
+        if life_stolen > 0 {
+            if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
+                attacker.health = (attacker.health + life_stolen).min(attacker.max_health);
             }
         }
 
@@ -296,17 +412,22 @@ impl GameState {
     pub fn initialise_deck(&mut self) {
         let mut new_deck: Vec<Card> = Vec::new();
 
-        for _ in 0..4 {
-            new_deck.push(Card::create_stone());
-        }
-        for _ in 0..5 {
-            new_deck.push(Card::create_stick());
+        for _ in 0..2 {
+            new_deck.push(Card::create_spiked_bat());
+            new_deck.push(Card::create_poison_bomb());
         }
         for _ in 0..3 {
             new_deck.push(Card::create_bandage());
+            new_deck.push(Card::create_antidote());
+            new_deck.push(Card::create_sword());
         }
         for _ in 0..4 {
+            new_deck.push(Card::create_stone());
+            new_deck.push(Card::create_fangs());
             new_deck.push(Card::create_shield());
+        }
+        for _ in 0..5 {
+            new_deck.push(Card::create_stick());
         }
 
         let mut rng = rand::rng();
