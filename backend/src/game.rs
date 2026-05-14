@@ -3,7 +3,7 @@ use serde::Serialize;
 
 use crate::{
     card::{Card, CardAbility, CardEffect},
-    models::{ActiveEffect, Player, PlayerClass, PlayerColour, Status},
+    models::{ActiveEffect, FireTile, Player, PlayerClass, PlayerColour, Status},
 };
 
 #[derive(Debug, Serialize, Clone)]
@@ -14,6 +14,7 @@ pub struct GameState {
     pub last_roll: i16,
     pub width: u8,
     pub height: u8,
+    pub fire_tiles: Vec<FireTile>,
     pub deck: Vec<Card>,
 }
 
@@ -25,6 +26,7 @@ impl GameState {
             last_roll: 0,
             width,
             height,
+            fire_tiles: Vec::new(),
             deck: Vec::new(),
         }
     }
@@ -108,6 +110,24 @@ impl GameState {
             }
         }
 
+        self.fire_tiles.retain_mut(|tile| {
+            if tile.duration > 0 {
+                tile.duration -= 1;
+                true
+            } else {
+                false
+            }
+        });
+        for player in &mut self.players {
+            if self
+                .fire_tiles
+                .iter()
+                .any(|f| f.x == player.x && f.y == player.y)
+            {
+                player.health = player.health.saturating_sub(1);
+            }
+        }
+
         if let Some(index) = self
             .players
             .iter()
@@ -145,7 +165,7 @@ impl GameState {
             PlayerClass::Mage,
             PlayerClass::Knight,
             PlayerClass::Assassin,
-            // PlayerClass::Arsenist,
+            PlayerClass::Arsenist,
         ];
         let taken_classes: Vec<PlayerClass> =
             self.players.iter().map(|p| p.class.clone()).collect();
@@ -259,6 +279,19 @@ impl GameState {
                     return Err("Out of range!".to_string());
                 }
             }
+            if let CardEffect::Ignite = effect {
+                let patterns = vec![
+                    (target_pos.0, target_pos.1),
+                    (target_pos.0, target_pos.1.saturating_add(1)),
+                    (target_pos.0, target_pos.1.saturating_sub(1)),
+                    (target_pos.0.saturating_add(1), target_pos.1),
+                    (target_pos.0.saturating_sub(1), target_pos.1),
+                ];
+
+                for (x, y) in patterns {
+                    self.fire_tiles.push(FireTile { x, y, duration: 2 });
+                }
+            }
         }
         if let Some(attacker) = self.players.iter_mut().find(|p| p.id == attacker_id) {
             if let Some(card) = attacker.cards.iter_mut().find(|c| c.id == card_id) {
@@ -298,7 +331,6 @@ impl GameState {
 
             let is_in_hit_zone = match card_name.as_str() {
                 "Poison Bomb" => dx.max(dy) <= 1,
-                "Fire Drink" if use_ability => (dx + dy) <= 1,
                 _ => dx == 0 && dy == 0,
             };
 

@@ -21,7 +21,8 @@ export type CardEffect =
   | { CureStatus: { status: Status } }
   | { Range: { max_range: number } }
   | { Shield: { value: number } }
-  | { Ability: { ability: CardAbility; cooldown: number } };
+  | { Ability: { ability: CardAbility; cooldown: number } }
+  | 'Ignite';
 
 export interface Card {
   id: string;
@@ -29,6 +30,12 @@ export interface Card {
   isSignature: boolean;
   cooldown: number;
   effects: CardEffect[];
+}
+
+export interface FireTile {
+  x: number;
+  y: number;
+  duration: number;
 }
 
 export interface ActiveEffect {
@@ -55,4 +62,5 @@ export interface GameState {
   lastRoll: number;
   width: number;
   height: number;
+  fireTiles: FireTile[];
 }

@@ -48,13 +48,19 @@ const isTargetable = computed(() => {
   return false;
 });
 
+const isOnFire = computed(() => {
+  if (!store.gameId || !store.gameState) return false;
+  if (store.gameState.fireTiles.find((t) => t.x === props.x && t.y === props.y)) return true;
+  return false;
+});
+
 const handleMove = () => {
   if (store.myPlayerId === null || store.isDrawing || store.isRolling) {
     return;
   }
 
   if (store.selectedCardId) {
-    store.useCard(props.x, props.y, false);
+    store.useCard(props.x, props.y);
   } else {
     store.makeMove(store.myPlayerId, props.x, props.y);
   }
@@ -62,8 +68,7 @@ const handleMove = () => {
 </script>
 
 <template>
-  <div
-    @click="handleMove"
+  <div @click="handleMove"
     class="relative w-10 h-10 sm:w-14 sm:h-14 bg-slate-800/40 border border-slate-700/10 hover:bg-slate-700/60 transition-all cursor-pointer flex items-center justify-center overflow-hidden"
     :class="{
       'bg-red-500/20 border-red-500/50 shadow-[inset_0_0_15px_rgba(239,68,68,0.4)]': isTargetable,
@@ -71,18 +76,15 @@ const handleMove = () => {
         isReachable && !store.selectedCardId,
       'bg-slate-800/40 border-slate-700/10':
         !isTargetable && !(isReachable && !store.selectedCardId),
-    }"
-  >
+    }">
     <div v-if="isReachable && !player" class="w-2 h-2 rounded-full bg-indigo-400/40"></div>
-    <div
-      v-if="player"
-      class="w-4/5 h-4/5 rounded-full shadow-2xl transition-all duration-500 transform scale-90 z-10"
-      :class="colorMap[player.colour]"
-    >
-      <div
-        v-if="isCurrentTurn"
-        class="absolute inset-0 rounded-full animate-ping bg-white/30"
-      ></div>
+    <div v-if="player" class="w-4/5 h-4/5 rounded-full shadow-2xl transition-all duration-500 transform scale-90 z-10"
+      :class="colorMap[player.colour]">
+      <div v-if="isCurrentTurn" class="absolute inset-0 rounded-full animate-ping bg-white/30"></div>
+    </div>
+    <div v-if="isOnFire"
+      class="absolute inset-0 bg-orange-600/40 animate-pulse border-2 border-orange-500 shadow-[inset_0_0_15px_rgba(255,100,0,1)]">
+      <span class="absolute bottom-1 right-1 text-[8px]">🔥</span>
     </div>
 
     <span class="absolute bottom-0.5 right-1 text-[8px] text-slate-700 select-none">

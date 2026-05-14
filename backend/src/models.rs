@@ -57,7 +57,15 @@ impl PlayerClass {
             Self::Mage => vec![Card::create_staff()],
             Self::Knight => vec![Card::create_royal_sword(), Card::create_royal_shield()],
             Self::Assassin => vec![Card::create_dagger()],
-            _ => vec![Card::create_stick()],
+            Self::Arsenist => vec![Card::create_fire_drink()],
         }
     }
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename_all = "camelCase")]
+pub struct FireTile {
+    pub x: u8,
+    pub y: u8,
+    pub duration: u8,
 }

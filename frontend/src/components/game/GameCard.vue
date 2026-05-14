@@ -19,7 +19,7 @@ const containerStyle: CSSProperties = {
 const cardBase = computed(() => ({
   background: '#fff',
   width: '180px',
-  height: '234px',
+  height: '252px',
   borderRadius: '12px',
   backfaceVisibility: 'hidden' as const,
   transformStyle: 'preserve-3d' as const,

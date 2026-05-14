@@ -152,6 +152,16 @@ impl Card {
             ],
         }
     }
+
+    pub fn create_fire_drink() -> Self {
+        Self {
+            id: "".to_string(),
+            name: "Fire Drink".to_string(),
+            is_signature: true,
+            cooldown: 0,
+            effects: vec![CardEffect::Range { max_range: 3 }, CardEffect::Ignite],
+        }
+    }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -165,6 +175,7 @@ pub enum CardEffect {
     Range { max_range: u8 },
     Shield { value: i32 },
     Ability { ability: CardAbility, cooldown: u8 },
+    Ignite,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
