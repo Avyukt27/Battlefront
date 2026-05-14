@@ -408,20 +408,22 @@ impl GameState {
     pub fn initialise_deck(&mut self) {
         let mut new_deck: Vec<Card> = Vec::new();
 
+        for _ in 0..2 {
+            new_deck.push(Card::create_spiked_bat());
+            new_deck.push(Card::create_poison_bomb());
+        }
+        for _ in 0..3 {
+            new_deck.push(Card::create_bandage());
+            new_deck.push(Card::create_antidote());
+            new_deck.push(Card::create_sword());
+        }
         for _ in 0..4 {
             new_deck.push(Card::create_stone());
-        }
-        // for _ in 0..5 {
-        //     new_deck.push(Card::create_stick());
-        // }
-        // for _ in 0..3 {
-        //     new_deck.push(Card::create_bandage());
-        // }
-        // for _ in 0..4 {
-        //     new_deck.push(Card::create_shield());
-        // }
-        for _ in 0..4 {
             new_deck.push(Card::create_fangs());
+            new_deck.push(Card::create_shield());
+        }
+        for _ in 0..5 {
+            new_deck.push(Card::create_stick());
         }
 
         let mut rng = rand::rng();
